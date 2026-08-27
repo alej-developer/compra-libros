@@ -1,6 +1,6 @@
 /**
- * Logica principal de la interfaz de usuario para Mi Rincon de Libros.
- * Controla eventos de navegacion, busquedas, filtros y renderizado
+ * Lógica principal de la interfaz de usuario para Mi Rincón de Libros.
+ * Controla eventos de navegación, búsquedas, filtros y renderizado
  * en cuadrícula o lista limpia.
  */
 
@@ -31,18 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const infoFuentes = document.getElementById('info-fuentes');
     const pieFuentes = document.getElementById('pie-fuentes');
 
-    // Botones de navegacion
+    // Botones de navegación
     const botonesNav = document.querySelectorAll('.boton-nav');
     const vistaCuadricula = document.getElementById('vista-cuadricula');
     const vistaLista = document.getElementById('vista-lista');
     const sugerencias = document.querySelectorAll('.etiqueta-sugerencia');
 
-    // -- Estado de la aplicacion --
+    // -- Estado de la aplicación --
     let seccionActual = 'buscar'; // 'buscar', 'ofertas', 'independientes'
     let vistaActual = 'cuadricula'; // 'cuadricula', 'lista'
     let ultimaAccion = null;
 
-    // -- Inicializacion --
+    // -- Inicialización --
     cargarFuentes();
     configurarEventos();
 
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             panelFiltros.classList.toggle('filtros__panel--visible');
         });
 
-        // Busqueda por boton o Enter
+        // Búsqueda por botón o Enter
         botonBuscar.addEventListener('click', () => ejecutarBusquedaSegunSeccion());
         campoBusqueda.addEventListener('keydown', (evento) => {
             if (evento.key === 'Enter') {
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Navegacion superior
+        // Navegación superior
         botonesNav.forEach(boton => {
             boton.addEventListener('click', () => {
                 botonesNav.forEach(b => b.classList.remove('boton-nav--activo'));
@@ -73,11 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Cambio de vista (cuadricula / lista)
+        // Cambio de vista (cuadrícula / lista)
         vistaCuadricula.addEventListener('click', () => cambiarVista('cuadricula'));
         vistaLista.addEventListener('click', () => cambiarVista('lista'));
 
-        // Sugerencias de busqueda inicial
+        // Sugerencias de búsqueda inicial
         sugerencias.forEach(sugerencia => {
             sugerencia.addEventListener('click', () => {
                 campoBusqueda.value = sugerencia.dataset.busqueda;
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Boton de reintentar
+        // Botón de reintentar
         botonReintentar.addEventListener('click', () => {
             if (ultimaAccion) {
                 ultimaAccion();
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Adapta la interfaz segun la seccion activa.
+     * Adapta la interfaz según la sección activa.
      */
     function ajustarInterfazPorSeccion() {
         if (seccionActual === 'ofertas') {
@@ -110,12 +110,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 campoBusqueda.focus();
             }
         } else {
-            campoBusqueda.placeholder = 'Titulo, autor o tema...';
+            campoBusqueda.placeholder = 'Título, autor o tema...';
         }
     }
 
     /**
-     * Ejecuta la busqueda correspondiente segun la seccion actual.
+     * Ejecuta la búsqueda correspondiente según la sección actual.
      */
     function ejecutarBusquedaSegunSeccion() {
         if (seccionActual === 'ofertas') {
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Carga las fuentes disponibles en el pie de pagina.
+     * Carga las fuentes disponibles en el pie de página.
      */
     async function cargarFuentes() {
         try {
@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Renderiza las etiquetas de fuentes en el pie de pagina.
+     * Renderiza las etiquetas de fuentes en el pie de página.
      */
     function renderizarFuentesPie(fuentes) {
         pieFuentes.innerHTML = '';
@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Ejecuta una busqueda general.
+     * Ejecuta una búsqueda general.
      */
     async function ejecutarBusquedaGeneral() {
         const filtro = construirFiltro();
@@ -190,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const resultado = await window.clienteApi.buscarLibros(filtro);
             procesarResultados(resultado);
         } catch (error) {
-            mostrarError('No fue posible realizar la busqueda en este momento.');
+            mostrarError('No fue posible realizar la búsqueda en este momento.');
         }
     }
 
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Ejecuta la busqueda priorizando autores independientes.
+     * Ejecuta la búsqueda priorizando autores independientes.
      */
     async function ejecutarBusquedaIndependientes() {
         const filtro = construirFiltro();
@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let texto = `${cantidad} libro${cantidad === 1 ? '' : 's'} encontrado${cantidad === 1 ? '' : 's'}`;
 
         if (modo === 'ofertas') {
-            texto += ' en seccion de ofertas';
+            texto += ' en sección de ofertas';
         } else if (modo === 'independientes') {
             texto += ' de sellos y autores independientes';
         }
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const tarjeta = document.createElement('article');
             tarjeta.className = 'tarjeta-libro';
 
-            // Determinar formato predominante o tipo de edicion
+            // Determinar formato predominante o tipo de edición
             const formatoTexto = formatearTipoEdicion(libro, ediciones);
             const esDigital = formatoTexto.toLowerCase().includes('kindle') ||
                               formatoTexto.toLowerCase().includes('ebook') ||
@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${formatoTexto}
                     </span>
                     ${esIndependiente ? `
-                        <span class="tarjeta-libro__independiente" title="Puntuacion de independencia: ${puntuacionIndie}/100">
+                        <span class="tarjeta-libro__independiente" title="Puntuación de independencia: ${puntuacionIndie}/100">
                             Autor emergente
                         </span>
                     ` : ''}
@@ -357,27 +357,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Formatea el tipo de formato para mostrar de forma limpia (Fisico / Kindle / Digital).
+     * Formatea el tipo de formato para mostrar de forma limpia (Físico / Kindle / Digital).
      */
     function formatearTipoEdicion(libro, ediciones) {
         if (ediciones.length > 0 && ediciones[0].formato) {
             const f = ediciones[0].formato.toLowerCase();
-            if (f === 'ebook' || f.includes('kindle')) return 'Edicion Kindle / Digital';
-            if (f === 'tapa_dura') return 'Tapa dura (Fisico)';
-            if (f === 'tapa_blanda') return 'Tapa blanda (Fisico)';
+            if (f === 'ebook' || f.includes('kindle')) return 'Edición Kindle / Digital';
+            if (f === 'tapa_dura') return 'Tapa dura (Físico)';
+            if (f === 'tapa_blanda') return 'Tapa blanda (Físico)';
             if (f === 'bolsillo') return 'Libro de bolsillo';
             if (f === 'audiolibro') return 'Audiolibro';
         }
 
         if (libro.categorias && libro.categorias.some(c => c.toLowerCase().includes('kindle'))) {
-            return 'Edicion Kindle';
+            return 'Edición Kindle';
         }
 
-        return 'Edicion impresa / fisica';
+        return 'Edición impresa / física';
     }
 
     /**
-     * Obtiene el texto formateado de precio de un libro o edicion.
+     * Obtiene el texto formateado de precio de un libro o edición.
      */
     function obtenerTextoPrecio(item) {
         let precio = null;
@@ -407,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Alterna la disposicion visual entre cuadricula y lista.
+     * Alterna la disposición visual entre cuadrícula y lista.
      */
     function cambiarVista(tipo) {
         vistaActual = tipo;

@@ -5,10 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Buscador de libros con precios bajos y autores emergentes. Compara ediciones fisicas y digitales desde multiples librerias.">
-    <title>Mi Rincon de Libros - Buscador de ofertas literarias</title>
+        content="Buscador de libros con precios bajos y autores emergentes. Compara ediciones físicas y digitales desde múltiples librerías.">
+    <title>Mi Rincón de Libros - Buscador de ofertas literarias</title>
 
-    <!-- Tipografias -->
+    <!-- Tipografías -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -33,7 +33,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="cabecera__titulo">Mi Rincon de Libros</h1>
+                    <h1 class="cabecera__titulo">Mi Rincón de Libros</h1>
                     <p class="cabecera__subtitulo">Busca, compara y descubre lecturas a buen precio</p>
                 </div>
             </div>
@@ -54,7 +54,7 @@
     <!-- Contenido principal -->
     <main class="principal" id="principal">
 
-        <!-- Barra de busqueda -->
+        <!-- Barra de búsqueda -->
         <section class="buscador" id="buscador">
             <div class="buscador__contenedor">
                 <div class="buscador__campo">
@@ -63,7 +63,7 @@
                         <circle cx="11" cy="11" r="8" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    <input type="text" id="campo-busqueda" class="buscador__input" placeholder="Titulo, autor o tema..."
+                    <input type="text" id="campo-busqueda" class="buscador__input" placeholder="Título, autor o tema..."
                         autocomplete="off">
                     <button class="buscador__boton" id="boton-buscar" type="button">
                         Buscar
@@ -87,25 +87,25 @@
 
                     <div class="filtros__panel" id="panel-filtros">
                         <div class="filtros__grupo">
-                            <label class="filtros__etiqueta" for="filtro-categoria">Categoria</label>
+                            <label class="filtros__etiqueta" for="filtro-categoria">Categoría</label>
                             <select id="filtro-categoria" class="filtros__select">
                                 <option value="">Todas</option>
                                 <option value="Novela">Novela</option>
-                                <option value="Poesia">Poesia</option>
+                                <option value="Poesía">Poesía</option>
                                 <option value="Ensayo">Ensayo</option>
-                                <option value="Ciencia ficcion">Ciencia ficcion</option>
+                                <option value="Ciencia ficción">Ciencia ficción</option>
                                 <option value="Historia">Historia</option>
-                                <option value="Filosofia">Filosofia</option>
+                                <option value="Filosofía">Filosofía</option>
                                 <option value="Infantil">Infantil</option>
                             </select>
                         </div>
                         <div class="filtros__grupo">
-                            <label class="filtros__etiqueta" for="filtro-precio-min">Precio minimo</label>
+                            <label class="filtros__etiqueta" for="filtro-precio-min">Precio mínimo</label>
                             <input type="number" id="filtro-precio-min" class="filtros__input-num" min="0" step="0.50"
                                 placeholder="0.00">
                         </div>
                         <div class="filtros__grupo">
-                            <label class="filtros__etiqueta" for="filtro-precio-max">Precio maximo</label>
+                            <label class="filtros__etiqueta" for="filtro-precio-max">Precio máximo</label>
                             <input type="number" id="filtro-precio-max" class="filtros__input-num" min="0" step="0.50"
                                 placeholder="50.00">
                         </div>
@@ -113,10 +113,10 @@
                             <label class="filtros__etiqueta" for="filtro-idioma">Idioma</label>
                             <select id="filtro-idioma" class="filtros__select">
                                 <option value="">Todos</option>
-                                <option value="Espanol">Espanol</option>
-                                <option value="Ingles">Ingles</option>
-                                <option value="Frances">Frances</option>
-                                <option value="Portugues">Portugues</option>
+                                <option value="Español">Español</option>
+                                <option value="Inglés">Inglés</option>
+                                <option value="Francés">Francés</option>
+                                <option value="Portugués">Portugués</option>
                             </select>
                         </div>
                         <div class="filtros__grupo">
@@ -125,8 +125,8 @@
                                 <option value="relevancia">Relevancia</option>
                                 <option value="precio_asc">Precio: menor a mayor</option>
                                 <option value="precio_desc">Precio: mayor a menor</option>
-                                <option value="calificacion">Mejor calificacion</option>
-                                <option value="titulo_alfabetico">Titulo A-Z</option>
+                                <option value="calificacion">Mejor calificación</option>
+                                <option value="titulo_alfabetico">Título A-Z</option>
                             </select>
                         </div>
                     </div>
@@ -141,7 +141,7 @@
                 <span id="info-fuentes" class="controles-vista__fuentes"></span>
             </div>
             <div class="controles-vista__botones">
-                <button class="boton-vista boton-vista--activo" id="vista-cuadricula" title="Vista de cuadricula">
+                <button class="boton-vista boton-vista--activo" id="vista-cuadricula" title="Vista de cuadrícula">
                     <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
                         <rect x="3" y="3" width="7" height="7" rx="1" />
                         <rect x="14" y="3" width="7" height="7" rx="1" />
@@ -168,7 +168,7 @@
                     <div class="estado-carga__pagina"></div>
                 </div>
             </div>
-            <p class="estado-carga__texto">Buscando entre estanterias...</p>
+            <p class="estado-carga__texto">Buscando entre estanterías...</p>
         </div>
 
         <!-- Mensaje de bienvenida (estado inicial) -->
@@ -189,19 +189,19 @@
                         <rect x="94" y="26" width="9" height="44" rx="1" fill="#A0522D" />
                     </svg>
                 </div>
-                <h2 class="bienvenida__titulo">Tu rincon de lecturas</h2>
+                <h2 class="bienvenida__titulo">Tu rincón de lecturas</h2>
                 <p class="bienvenida__texto">
-                    Busca libros por titulo, autor o tema. Compara precios entre librerias fisicas
+                    Busca libros por título, autor o tema. Compara precios entre librerías físicas
                     y plataformas digitales. Descubre autores emergentes con obras a buen precio.
                 </p>
                 <div class="bienvenida__sugerencias">
                     <p class="bienvenida__etiqueta">Prueba buscando:</p>
                     <div class="bienvenida__etiquetas">
-                        <button class="etiqueta-sugerencia" data-busqueda="novela historica">novela historica</button>
-                        <button class="etiqueta-sugerencia" data-busqueda="poesia contemporanea">poesia
-                            contemporanea</button>
-                        <button class="etiqueta-sugerencia" data-busqueda="ciencia ficcion">ciencia ficcion</button>
-                        <button class="etiqueta-sugerencia" data-busqueda="ensayo filosofico">ensayo filosofico</button>
+                        <button class="etiqueta-sugerencia" data-busqueda="novela historica">novela histórica</button>
+                        <button class="etiqueta-sugerencia" data-busqueda="poesia contemporanea">poesía
+                            contemporánea</button>
+                        <button class="etiqueta-sugerencia" data-busqueda="ciencia ficcion">ciencia ficción</button>
+                        <button class="etiqueta-sugerencia" data-busqueda="ensayo filosofico">ensayo filosófico</button>
                     </div>
                 </div>
             </div>
@@ -209,7 +209,7 @@
 
         <!-- Contenedor de resultados -->
         <section class="resultados resultados--cuadricula" id="contenedor-resultados" style="display: none;">
-            <!-- Los libros se renderizan aqui dinamicamente -->
+            <!-- Los libros se renderizan aquí dinámicamente -->
         </section>
 
         <!-- Sin resultados -->
@@ -221,7 +221,7 @@
                 <line x1="15" y1="9" x2="9" y2="15" />
             </svg>
             <p class="sin-resultados__texto">No se encontraron libros con esos criterios.</p>
-            <p class="sin-resultados__sugerencia">Intenta con otros terminos o ajusta los filtros.</p>
+            <p class="sin-resultados__sugerencia">Intenta con otros términos o ajusta los filtros.</p>
         </section>
 
         <!-- Mensaje de error -->
@@ -232,21 +232,21 @@
                 <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             <p class="mensaje-error__texto" id="texto-error">No se pudo conectar con el servidor.</p>
-            <p class="mensaje-error__sugerencia">Verifica que el backend este en ejecucion y vuelve a intentarlo.</p>
+            <p class="mensaje-error__sugerencia">Verifica que el backend esté en ejecución y vuelve a intentarlo.</p>
             <button class="boton-reintentar" id="boton-reintentar">Reintentar</button>
         </section>
 
     </main>
 
-    <!-- Pie de pagina -->
+    <!-- Pie de página -->
     <footer class="pie" id="pie">
         <div class="pie__contenido">
             <p class="pie__texto">
-                Proyecto de busqueda y comparacion de libros.
-                Los datos se obtienen de fuentes publicas con fines informativos.
+                Proyecto de búsqueda y comparación de libros.
+                Los datos se obtienen de fuentes públicas con fines informativos.
             </p>
             <div class="pie__fuentes" id="pie-fuentes">
-                <!-- Las fuentes se cargan dinamicamente -->
+                <!-- Las fuentes se cargan dinámicamente -->
             </div>
         </div>
     </footer>

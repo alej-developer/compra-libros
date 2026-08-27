@@ -1,6 +1,6 @@
 /**
- * Cliente de API para la comunicacion con el backend FastAPI.
- * Proporciona metodos para consultar fuentes, buscar libros,
+ * Cliente de API para la comunicación con el backend FastAPI.
+ * Proporciona métodos para consultar fuentes, buscar libros,
  * obtener ofertas y filtrar autores independientes.
  */
 
@@ -12,7 +12,7 @@ class ClienteApiLibros {
     }
 
     /**
-     * Realiza una peticion HTTP con control de errores.
+     * Realiza una petición HTTP con control de errores.
      * @private
      */
     async _peticion(ruta, opciones = {}) {
@@ -38,7 +38,7 @@ class ClienteApiLibros {
             }
             return await respuesta.json();
         } catch (error) {
-            console.error(`Fallo en la peticion a ${ruta}:`, error);
+            console.error(`Fallo en la petición a ${ruta}:`, error);
             throw error;
         }
     }
@@ -52,8 +52,8 @@ class ClienteApiLibros {
     }
 
     /**
-     * Realiza una busqueda general de libros con filtros.
-     * @param {Object} filtro - Criterios de busqueda.
+     * Realiza una búsqueda general de libros con filtros.
+     * @param {Object} filtro - Criterios de búsqueda.
      * @returns {Promise<Object>}
      */
     async buscarLibros(filtro) {
@@ -66,7 +66,7 @@ class ClienteApiLibros {
     /**
      * Obtiene libros en oferta o con precios reducidos.
      * @param {number} precioMaximo - Precio tope para ofertas.
-     * @param {number} limite - Limite de resultados.
+     * @param {number} limite - Límite de resultados.
      * @returns {Promise<Object>}
      */
     async obtenerOfertas(precioMaximo = 10.0, limite = 50) {
@@ -78,9 +78,9 @@ class ClienteApiLibros {
     }
 
     /**
-     * Realiza una busqueda priorizando autores independientes o emergentes.
-     * @param {Object} filtro - Criterios de busqueda.
-     * @param {number} puntuacionMinima - Puntuacion minima de independencia.
+     * Realiza una búsqueda priorizando autores independientes o emergentes.
+     * @param {Object} filtro - Criterios de búsqueda.
+     * @param {number} puntuacionMinima - Puntuación mínima de independencia.
      * @returns {Promise<Object>}
      */
     async buscarAutoresIndependientes(filtro, puntuacionMinima = 50.0) {
