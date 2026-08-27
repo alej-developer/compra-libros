@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Buscador de libros con precios bajos y autores emergentes. Compara ediciones fisicas y digitales desde multiples librerias.">
+    <title>Mi Rincon de Libros - Buscador de ofertas literarias</title>
+
+    <!-- Tipografias -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+    <!-- Cabecera -->
+    <header class="cabecera" id="cabecera">
+        <div class="cabecera__contenido">
+            <div class="cabecera__marca">
+                <div class="cabecera__icono">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28"
+                        height="28">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                        <line x1="8" y1="6" x2="16" y2="6" />
+                        <line x1="8" y1="10" x2="14" y2="10" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="cabecera__titulo">Mi Rincon de Libros</h1>
+                    <p class="cabecera__subtitulo">Busca, compara y descubre lecturas a buen precio</p>
+                </div>
+            </div>
+            <nav class="cabecera__nav">
+                <button class="boton-nav boton-nav--activo" data-seccion="buscar" id="btn-buscar">
+                    Buscar
+                </button>
+                <button class="boton-nav" data-seccion="ofertas" id="btn-ofertas">
+                    Ofertas
+                </button>
+                <button class="boton-nav" data-seccion="independientes" id="btn-independientes">
+                    Autores emergentes
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="principal" id="principal">
+
+        <!-- Barra de busqueda -->
+        <section class="buscador" id="buscador">
+            <div class="buscador__contenedor">
+                <div class="buscador__campo">
+                    <svg class="buscador__icono-lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" width="20" height="20">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text" id="campo-busqueda" class="buscador__input" placeholder="Titulo, autor o tema..."
+                        autocomplete="off">
+                    <button class="buscador__boton" id="boton-buscar" type="button">
+                        Buscar
+                    </button>
+                </div>
+
+                <!-- Filtros -->
+                <div class="filtros" id="filtros">
+                    <button class="filtros__toggle" id="toggle-filtros" type="button">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                            height="16">
+                            <line x1="4" y1="6" x2="20" y2="6" />
+                            <line x1="8" y1="12" x2="20" y2="12" />
+                            <line x1="12" y1="18" x2="20" y2="18" />
+                            <circle cx="6" cy="6" r="1.5" fill="currentColor" />
+                            <circle cx="10" cy="12" r="1.5" fill="currentColor" />
+                            <circle cx="14" cy="18" r="1.5" fill="currentColor" />
+                        </svg>
+                        Filtros avanzados
+                    </button>
+
+                    <div class="filtros__panel" id="panel-filtros">
+                        <div class="filtros__grupo">
+                            <label class="filtros__etiqueta" for="filtro-categoria">Categoria</label>
+                            <select id="filtro-categoria" class="filtros__select">
+                                <option value="">Todas</option>
+                                <option value="Novela">Novela</option>
+                                <option value="Poesia">Poesia</option>
+                                <option value="Ensayo">Ensayo</option>
+                                <option value="Ciencia ficcion">Ciencia ficcion</option>
+                                <option value="Historia">Historia</option>
+                                <option value="Filosofia">Filosofia</option>
+                                <option value="Infantil">Infantil</option>
+                            </select>
+                        </div>
+                        <div class="filtros__grupo">
+                            <label class="filtros__etiqueta" for="filtro-precio-min">Precio minimo</label>
+                            <input type="number" id="filtro-precio-min" class="filtros__input-num" min="0" step="0.50"
+                                placeholder="0.00">
+                        </div>
+                        <div class="filtros__grupo">
+                            <label class="filtros__etiqueta" for="filtro-precio-max">Precio maximo</label>
+                            <input type="number" id="filtro-precio-max" class="filtros__input-num" min="0" step="0.50"
+                                placeholder="50.00">
+                        </div>
+                        <div class="filtros__grupo">
+                            <label class="filtros__etiqueta" for="filtro-idioma">Idioma</label>
+                            <select id="filtro-idioma" class="filtros__select">
+                                <option value="">Todos</option>
+                                <option value="Espanol">Espanol</option>
+                                <option value="Ingles">Ingles</option>
+                                <option value="Frances">Frances</option>
+                                <option value="Portugues">Portugues</option>
+                            </select>
+                        </div>
+                        <div class="filtros__grupo">
+                            <label class="filtros__etiqueta" for="filtro-orden">Ordenar por</label>
+                            <select id="filtro-orden" class="filtros__select">
+                                <option value="relevancia">Relevancia</option>
+                                <option value="precio_asc">Precio: menor a mayor</option>
+                                <option value="precio_desc">Precio: mayor a menor</option>
+                                <option value="calificacion">Mejor calificacion</option>
+                                <option value="titulo_alfabetico">Titulo A-Z</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controles de vista -->
+        <section class="controles-vista" id="controles-vista" style="display: none;">
+            <div class="controles-vista__info">
+                <span id="info-resultados" class="controles-vista__texto"></span>
+                <span id="info-fuentes" class="controles-vista__fuentes"></span>
+            </div>
+            <div class="controles-vista__botones">
+                <button class="boton-vista boton-vista--activo" id="vista-cuadricula" title="Vista de cuadricula">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                        <rect x="3" y="3" width="7" height="7" rx="1" />
+                        <rect x="14" y="3" width="7" height="7" rx="1" />
+                        <rect x="3" y="14" width="7" height="7" rx="1" />
+                        <rect x="14" y="14" width="7" height="7" rx="1" />
+                    </svg>
+                </button>
+                <button class="boton-vista" id="vista-lista" title="Vista de lista">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                        <rect x="3" y="4" width="18" height="4" rx="1" />
+                        <rect x="3" y="10" width="18" height="4" rx="1" />
+                        <rect x="3" y="16" width="18" height="4" rx="1" />
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Estado de carga -->
+        <div class="estado-carga" id="estado-carga" style="display: none;">
+            <div class="estado-carga__animacion">
+                <div class="estado-carga__libro">
+                    <div class="estado-carga__pagina"></div>
+                    <div class="estado-carga__pagina"></div>
+                    <div class="estado-carga__pagina"></div>
+                </div>
+            </div>
+            <p class="estado-carga__texto">Buscando entre estanterias...</p>
+        </div>
+
+        <!-- Mensaje de bienvenida (estado inicial) -->
+        <section class="bienvenida" id="bienvenida">
+            <div class="bienvenida__contenido">
+                <div class="bienvenida__estante">
+                    <svg viewBox="0 0 120 80" fill="none" width="120" height="80">
+                        <!-- Estante -->
+                        <rect x="5" y="70" width="110" height="4" rx="1" fill="#8B7355" />
+                        <!-- Libros en el estante -->
+                        <rect x="12" y="20" width="10" height="50" rx="1" fill="#A0522D" />
+                        <rect x="24" y="28" width="8" height="42" rx="1" fill="#6B8E6B" />
+                        <rect x="34" y="15" width="12" height="55" rx="1" fill="#8B6914" />
+                        <rect x="48" y="25" width="9" height="45" rx="1" fill="#B87333" />
+                        <rect x="59" y="22" width="11" height="48" rx="1" fill="#704214" />
+                        <rect x="72" y="30" width="8" height="40" rx="1" fill="#966F33" />
+                        <rect x="82" y="18" width="10" height="52" rx="1" fill="#7B6B5A" />
+                        <rect x="94" y="26" width="9" height="44" rx="1" fill="#A0522D" />
+                    </svg>
+                </div>
+                <h2 class="bienvenida__titulo">Tu rincon de lecturas</h2>
+                <p class="bienvenida__texto">
+                    Busca libros por titulo, autor o tema. Compara precios entre librerias fisicas
+                    y plataformas digitales. Descubre autores emergentes con obras a buen precio.
+                </p>
+                <div class="bienvenida__sugerencias">
+                    <p class="bienvenida__etiqueta">Prueba buscando:</p>
+                    <div class="bienvenida__etiquetas">
+                        <button class="etiqueta-sugerencia" data-busqueda="novela historica">novela historica</button>
+                        <button class="etiqueta-sugerencia" data-busqueda="poesia contemporanea">poesia
+                            contemporanea</button>
+                        <button class="etiqueta-sugerencia" data-busqueda="ciencia ficcion">ciencia ficcion</button>
+                        <button class="etiqueta-sugerencia" data-busqueda="ensayo filosofico">ensayo filosofico</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contenedor de resultados -->
+        <section class="resultados resultados--cuadricula" id="contenedor-resultados" style="display: none;">
+            <!-- Los libros se renderizan aqui dinamicamente -->
+        </section>
+
+        <!-- Sin resultados -->
+        <section class="sin-resultados" id="sin-resultados" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                <line x1="9" y1="9" x2="15" y2="15" />
+                <line x1="15" y1="9" x2="9" y2="15" />
+            </svg>
+            <p class="sin-resultados__texto">No se encontraron libros con esos criterios.</p>
+            <p class="sin-resultados__sugerencia">Intenta con otros terminos o ajusta los filtros.</p>
+        </section>
+
+        <!-- Mensaje de error -->
+        <section class="mensaje-error" id="mensaje-error" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <p class="mensaje-error__texto" id="texto-error">No se pudo conectar con el servidor.</p>
+            <p class="mensaje-error__sugerencia">Verifica que el backend este en ejecucion y vuelve a intentarlo.</p>
+            <button class="boton-reintentar" id="boton-reintentar">Reintentar</button>
+        </section>
+
+    </main>
+
+    <!-- Pie de pagina -->
+    <footer class="pie" id="pie">
+        <div class="pie__contenido">
+            <p class="pie__texto">
+                Proyecto de busqueda y comparacion de libros.
+                Los datos se obtienen de fuentes publicas con fines informativos.
+            </p>
+            <div class="pie__fuentes" id="pie-fuentes">
+                <!-- Las fuentes se cargan dinamicamente -->
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
