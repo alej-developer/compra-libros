@@ -55,11 +55,17 @@ def crear_aplicacion() -> FastAPI:
 
 def _registrar_rutas(aplicacion: FastAPI) -> None:
     """
-    Registra todas las rutas base de la aplicacion.
+    Registra todas las rutas de la aplicacion.
+
+    Incluye las rutas base (raiz, salud) y los routers de cada modulo
+    funcional (scraping, etc.).
 
     Parametros:
         aplicacion: Instancia de FastAPI donde se registran las rutas.
     """
+    # Registrar router del motor de scraping
+    from app.rutas.rutas_scraping import router as router_scraping
+    aplicacion.include_router(router_scraping)
 
     @aplicacion.get(
         "/",
