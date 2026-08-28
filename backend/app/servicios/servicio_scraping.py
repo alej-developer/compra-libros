@@ -19,6 +19,7 @@ from app.modelos.resultado_busqueda import LibroConEdiciones, ResultadoBusqueda
 from app.scraping.base import ScraperBase
 from app.scraping.scraper_libreria_fisica import ScraperLibreriaFisica
 from app.scraping.scraper_plataforma_digital import ScraperPlataformaDigital
+from app.scraping.scraper_segunda_mano import ScraperSegundaMano
 from app.scraping.filtro_autores import FiltroAutoresIndependientes
 
 
@@ -29,9 +30,13 @@ class ServicioScraping:
     """
     Servicio principal que orquesta las operaciones de scraping.
 
-    Gestiona multiples scrapers (fisicos y digitales), ejecuta busquedas
-    en paralelo, aplica el algoritmo de filtrado de autores independientes
-    y consolida los resultados en una respuesta unificada.
+    Gestiona multiples scrapers (fisicos, digitales y de segunda mano),
+    ejecuta busquedas en paralelo, aplica el algoritmo de filtrado de
+    autores independientes y consolida los resultados en una respuesta
+    unificada.
+
+    Incluye filtrado silencioso: los libros sin URL de compra valida
+    se descartan automaticamente de los resultados finales.
 
     Atributos:
         _scrapers: Lista de scrapers registrados.
@@ -142,6 +147,79 @@ class ServicioScraping:
             )
         )
 
+        # -- Plataformas de segunda mano --
+        self._scrapers.append(
+            ScraperSegundaMano(
+                nombre_fuente="Iberlibro",
+                url_base="https://www.iberlibro.com",
+                pais="Espana",
+                moneda="EUR",
+                selectores={
+                    "contenedor_libro": ".result-item, .cf-result",
+                    "titulo": ".result-title a, .title a",
+                    "autor": ".result-author, .author",
+                    "precio": ".result-price, .item-price",
+                    "editorial": ".result-publisher, .publisher",
+                    "imagen": "img.result-image, img.srp-item-image",
+                    "enlace": ".result-title a, .title a",
+                    "categoria": ".result-category, .genre",
+                    "isbn": ".result-isbn, .isbn",
+                    "condicion": ".result-binding, .condition",
+                    "formato": ".result-binding, .format",
+                    "url_busqueda": "{url_base}/servlet/SearchResults?kn={termino}&pn={pagina}",
+                    "url_ofertas": "{url_base}/servlet/SearchResults?sortby=1&kn=ofertas",
+                },
+            )
+        )
+
+        self._scrapers.append(
+            ScraperSegundaMano(
+                nombre_fuente="Todocoleccion",
+                url_base="https://www.todocoleccion.net",
+                pais="Espana",
+                moneda="EUR",
+                selectores={
+                    "contenedor_libro": ".product-card, .lot-item, .search-result-item",
+                    "titulo": ".product-title a, .lot-title a, h3 a",
+                    "autor": ".product-author, .lot-author",
+                    "precio": ".product-price, .lot-price, .price-value",
+                    "editorial": ".product-publisher, .editorial",
+                    "imagen": "img.product-img, img.lot-image",
+                    "enlace": ".product-title a, .lot-title a, h3 a",
+                    "categoria": ".product-category, .lot-category",
+                    "isbn": ".isbn",
+                    "condicion": ".product-condition, .lot-condition",
+                    "formato": ".product-format",
+                    "url_busqueda": "{url_base}/libros-segunda-mano/{termino}?pag={pagina}",
+                    "url_ofertas": "{url_base}/libros-segunda-mano/?sort=price_asc",
+                },
+            )
+        )
+
+        self._scrapers.append(
+            ScraperSegundaMano(
+                nombre_fuente="Uniliber",
+                url_base="https://www.uniliber.com",
+                pais="Espana",
+                moneda="EUR",
+                selectores={
+                    "contenedor_libro": ".libro-item, .book-result, .ficha-libro",
+                    "titulo": ".libro-titulo a, .book-title a, h2 a",
+                    "autor": ".libro-autor, .book-author",
+                    "precio": ".libro-precio, .book-price",
+                    "editorial": ".libro-editorial, .book-publisher",
+                    "imagen": "img.libro-imagen, img.book-cover",
+                    "enlace": ".libro-titulo a, .book-title a, h2 a",
+                    "categoria": ".libro-categoria, .book-genre",
+                    "isbn": ".libro-isbn, .isbn",
+                    "condicion": ".libro-estado, .book-condition",
+                    "formato": ".libro-formato, .book-format",
+                    "url_busqueda": "{url_base}/busqueda/?searchword={termino}&page={pagina}",
+                    "url_ofertas": "{url_base}/busqueda/?searchword=ofertas&sort=price",
+                },
+            )
+        )
+
         logger.info(
             "Registrados %d scrapers: %s",
             len(self._scrapers),
@@ -177,6 +255,7 @@ class ServicioScraping:
 
         Lanza las busquedas en paralelo en todos los scrapers (o solo
         en los especificados en el filtro) y consolida los resultados.
+        Los libros sin URL de compra valida se descartan silenciosamente.
 
         Parametros:
             filtro: Criterios de busqueda y filtraje.
@@ -202,12 +281,13 @@ class ServicioScraping:
         ]
         resultados_por_fuente = await asyncio.gather(*tareas)
 
-        # Consolidar resultados
+        # Consolidar resultados y filtrar libros sin URL de compra valida
         todos_los_libros = []
         for libros_fuente in resultados_por_fuente:
             for libro in libros_fuente:
-                libro_con_ediciones = LibroConEdiciones(libro=libro)
-                todos_los_libros.append(libro_con_ediciones)
+                if self._tiene_url_compra_valida(libro):
+                    libro_con_ediciones = LibroConEdiciones(libro=libro)
+                    todos_los_libros.append(libro_con_ediciones)
 
         # Eliminar duplicados por titulo similar
         libros_unicos = self._eliminar_duplicados(todos_los_libros)
@@ -262,11 +342,13 @@ class ServicioScraping:
         ]
         resultados_por_fuente = await asyncio.gather(*tareas)
 
+        # Consolidar resultados y filtrar libros sin URL de compra valida
         todos_los_libros = []
         for libros_fuente in resultados_por_fuente:
             for libro in libros_fuente:
-                libro_con_ediciones = LibroConEdiciones(libro=libro)
-                todos_los_libros.append(libro_con_ediciones)
+                if self._tiene_url_compra_valida(libro):
+                    libro_con_ediciones = LibroConEdiciones(libro=libro)
+                    todos_los_libros.append(libro_con_ediciones)
 
         libros_unicos = self._eliminar_duplicados(todos_los_libros)
         tiempo_total = time.time() - inicio
@@ -320,6 +402,24 @@ class ServicioScraping:
         return resultado_base
 
     # -- Metodos internos --
+
+    def _tiene_url_compra_valida(self, libro: Libro) -> bool:
+        """
+        Verifica si un libro tiene una URL de compra valida.
+
+        Este metodo implementa el filtrado silencioso: los libros cuyo
+        campo url_compra no comience con http:// o https:// se descartan
+        sin generar errores visibles al usuario.
+
+        Parametros:
+            libro: Libro a verificar.
+
+        Retorna:
+            True si el libro tiene una URL de compra valida.
+        """
+        if not libro.url_compra:
+            return False
+        return libro.url_compra.startswith(("http://", "https://"))
 
     def _seleccionar_scrapers(self, filtro: FiltroScraping) -> List[ScraperBase]:
         """
@@ -444,6 +544,6 @@ class ServicioScraping:
         campos = [
             libro.titulo, libro.isbn, libro.editorial,
             libro.descripcion, libro.imagen_url, libro.idioma,
-            libro.calificacion, libro.url_fuente,
+            libro.calificacion, libro.url_fuente, libro.url_compra,
         ]
         return sum(1 for c in campos if c is not None) + len(libro.autores) + len(libro.categorias)

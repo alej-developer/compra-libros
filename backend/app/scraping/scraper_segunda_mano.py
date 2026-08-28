@@ -1,9 +1,13 @@
 """
-Scraper para plataformas digitales (Kindle, Google Books, etc.).
+Scraper para librerias y plataformas de libros de segunda mano.
 
-Implementa la logica de scraping especifica para tiendas de libros
-digitales (ebooks, audiolibros). Extrae: titulo, autor, precio,
-formato digital, genero, pais, editorial, url de compra real y estado.
+Implementa la logica de scraping especifica para sitios web dedicados
+a la venta de libros usados, de segunda mano y entre particulares.
+Extrae: titulo, autor, precio, estado fisico, url de compra real,
+editorial y formato.
+
+Todos los libros extraidos por este scraper se marcan automaticamente
+con estado "De segunda mano".
 """
 
 import logging
@@ -19,46 +23,60 @@ from app.scraping.base import ScraperBase
 from app.scraping.utilidades import limpiar_texto, extraer_precio
 
 
-logger = logging.getLogger("scraping.plataforma_digital")
+logger = logging.getLogger("scraping.segunda_mano")
 
 
-class ScraperPlataformaDigital(ScraperBase):
+class ScraperSegundaMano(ScraperBase):
     """
-    Scraper especializado en plataformas de libros digitales.
+    Scraper especializado en plataformas de libros de segunda mano.
 
-    Implementa la extraccion de datos de tiendas de ebooks y audiolibros
-    como Amazon Kindle, Google Play Books, Kobo, etc.
+    Implementa la extraccion de datos de sitios web dedicados a la compraventa
+    de libros usados como Iberlibro, Todocoleccion, Uniliber, etc.
 
-    Las plataformas digitales suelen tener estructuras HTML diferentes
-    a las librerias fisicas, con precios que varian segun la region
-    y formatos exclusivamente digitales (EPUB, MOBI, PDF, audiolibro).
+    Todos los libros extraidos por esta clase se marcan automaticamente con
+    el estado "De segunda mano". Los libros sin un enlace de compra valido
+    se descartan silenciosamente para garantizar una experiencia impecable.
 
-    La clase utiliza selectores CSS configurables para adaptarse a
-    diferentes plataformas sin modificar la logica principal.
+    La clase utiliza selectores CSS configurables para adaptarse a cada
+    plataforma de segunda mano sin modificar la logica principal.
     """
 
     def __init__(
         self,
         nombre_fuente: str,
         url_base: str,
-        pais: str = "Internacional",
+        pais: str = "Espana",
         moneda: str = "EUR",
         selectores: Optional[dict] = None,
     ) -> None:
         """
-        Inicializa el scraper de plataforma digital.
+        Inicializa el scraper de segunda mano.
 
         Parametros:
-            nombre_fuente: Nombre de la plataforma.
-            url_base: URL base de la plataforma.
-            pais: Pais o region de la plataforma.
+            nombre_fuente: Nombre de la plataforma de libros usados.
+            url_base: URL base del sitio web.
+            pais: Pais de la plataforma.
             moneda: Moneda principal de la plataforma.
-            selectores: Selectores CSS personalizados.
+            selectores: Diccionario con selectores CSS para cada campo.
+                Claves esperadas:
+                - 'contenedor_libro': Selector del contenedor de cada libro.
+                - 'titulo': Selector del titulo.
+                - 'autor': Selector del autor.
+                - 'precio': Selector del precio.
+                - 'editorial': Selector de la editorial.
+                - 'imagen': Selector de la imagen de portada.
+                - 'enlace': Selector del enlace al detalle del libro.
+                - 'categoria': Selector de la categoria/genero.
+                - 'isbn': Selector del ISBN.
+                - 'condicion': Selector del estado fisico del ejemplar.
+                - 'formato': Selector del formato.
+                - 'url_busqueda': Plantilla de URL de busqueda.
+                - 'url_ofertas': URL de la seccion de ofertas o precios bajos.
         """
         super().__init__(
             nombre_fuente=nombre_fuente,
             url_base=url_base,
-            tipo_fuente="digital",
+            tipo_fuente="segunda_mano",
             pais=pais,
         )
         self._moneda = moneda
@@ -66,41 +84,36 @@ class ScraperPlataformaDigital(ScraperBase):
 
     def _selectores_por_defecto(self) -> dict:
         """
-        Retorna los selectores CSS por defecto para plataformas digitales.
+        Retorna los selectores CSS por defecto para plataformas de segunda mano.
+
+        Estos selectores son genericos y deben personalizarse para
+        cada sitio web objetivo.
 
         Retorna:
-            Diccionario con selectores CSS adaptados a tiendas digitales.
+            Diccionario con los selectores CSS por defecto.
         """
         return {
             "contenedor_libro": (
-                ".s-result-item, .book-item, .product-card, "
-                "[data-component-type='s-search-result']"
+                ".result-item, .book-item, .product-item, "
+                ".listing-item, article.item"
             ),
-            "titulo": (
-                "h2 a span, .book-title, .product-title, "
-                "[data-cy='title-recipe'] a"
-            ),
-            "autor": ".a-size-base+ .a-size-base, .author, .book-author",
-            "precio": ".a-price .a-offscreen, .price, .ebook-price, .kindle-price",
-            "precio_oferta": ".a-price[data-a-color='price'] .a-offscreen, .deal-price",
-            "editorial": ".publisher, .editorial, [data-cy='publisher']",
-            "imagen": "img.s-image, img.book-cover, .product-image img",
-            "enlace": "h2 a, .book-link, a.product-link",
-            "categoria": ".a-badge-text, .genre, .category-tag",
-            "isbn": ".isbn, [itemprop='isbn']",
-            "resenas": ".a-size-base.s-underline-text, .reviews-count, .rating-count",
-            "calificacion": ".a-icon-alt, .star-rating, [data-cy='rating']",
-            "formato": ".a-text-bold, .format-type, .book-format",
-            "disponibilidad": ".a-declarative, .availability, .stock",
-            "url_busqueda": (
-                "{url_base}/s?k={termino}&i=digital-text&page={pagina}"
-            ),
-            "url_ofertas": "{url_base}/s?k=ebook+ofertas&i=digital-text&s=price-asc-rank",
+            "titulo": "h2 a, h3 a, .titulo, .book-title, .item-title a",
+            "autor": ".autor, .author, .book-author, .seller-author",
+            "precio": ".precio, .price, .book-price, .item-price",
+            "editorial": ".editorial, .publisher, .book-publisher",
+            "imagen": "img.portada, img.book-cover, img.item-image",
+            "enlace": "a.detalle, a.book-link, h2 a, h3 a, a.item-link",
+            "categoria": ".categoria, .genre, .book-genre, .item-category",
+            "isbn": ".isbn, [itemprop='isbn'], .book-isbn",
+            "condicion": ".condicion, .condition, .book-condition, .item-condition",
+            "formato": ".formato, .format, .book-format",
+            "url_busqueda": "{url_base}/buscar?q={termino}&page={pagina}",
+            "url_ofertas": "{url_base}/ofertas",
         }
 
     async def construir_url_busqueda(self, filtro: FiltroScraping) -> str:
         """
-        Construye la URL de busqueda para la plataforma digital.
+        Construye la URL de busqueda para la plataforma de segunda mano.
 
         Parametros:
             filtro: Criterios de busqueda.
@@ -110,7 +123,7 @@ class ScraperPlataformaDigital(ScraperBase):
         """
         plantilla = self._selectores.get(
             "url_busqueda",
-            "{url_base}/s?k={termino}&i=digital-text&page={pagina}",
+            "{url_base}/buscar?q={termino}&page={pagina}",
         )
         url = plantilla.format(
             url_base=self._url_base,
@@ -121,11 +134,9 @@ class ScraperPlataformaDigital(ScraperBase):
         # Agregar filtros de precio si estan definidos
         parametros_extra = []
         if filtro.precio_minimo is not None:
-            # El formato de precio varia por plataforma; se usa centimos
-            precio_min_centimos = int(filtro.precio_minimo * 100)
-            parametros_extra.append(f"low-price={filtro.precio_minimo}")
+            parametros_extra.append(f"precio_min={filtro.precio_minimo}")
         if filtro.precio_maximo is not None:
-            parametros_extra.append(f"high-price={filtro.precio_maximo}")
+            parametros_extra.append(f"precio_max={filtro.precio_maximo}")
 
         if parametros_extra:
             separador = "&" if "?" in url else "?"
@@ -135,17 +146,17 @@ class ScraperPlataformaDigital(ScraperBase):
 
     async def buscar_libros(self, filtro: FiltroScraping) -> List[Libro]:
         """
-        Busca libros digitales segun los filtros proporcionados.
+        Busca libros de segunda mano segun los filtros proporcionados.
 
         Parametros:
             filtro: Criterios de busqueda y filtraje.
 
         Retorna:
-            Lista de libros digitales encontrados.
+            Lista de libros usados encontrados.
         """
         url = await self.construir_url_busqueda(filtro)
         self._logger.info(
-            "Buscando en %s (digital): '%s'",
+            "Buscando en %s (segunda mano): '%s'",
             self._nombre_fuente, filtro.termino_busqueda,
         )
 
@@ -156,39 +167,44 @@ class ScraperPlataformaDigital(ScraperBase):
 
         libros = self._parsear_resultados(pagina, filtro)
         self._logger.info(
-            "Encontrados %d libros digitales en %s",
+            "Encontrados %d libros de segunda mano en %s",
             len(libros), self._nombre_fuente,
         )
         return libros
 
     async def extraer_detalles_libro(self, url_libro: str) -> Optional[Libro]:
         """
-        Extrae los detalles completos de un ebook desde su pagina.
+        Extrae los detalles completos de un libro de segunda mano desde su pagina.
 
         Parametros:
-            url_libro: URL directa a la pagina del libro digital.
+            url_libro: URL directa a la pagina del libro.
 
         Retorna:
-            Libro con todos los detalles, o None si falla.
+            Libro con todos los detalles, o None si falla o el enlace no es valido.
         """
-        self._logger.info("Extrayendo detalles digitales de: %s", url_libro)
+        self._logger.info("Extrayendo detalles de segunda mano de: %s", url_libro)
 
         pagina = await self._cliente.obtener_pagina(url_libro)
         if pagina is None:
             return None
 
         try:
-            titulo = self._extraer_texto(pagina, "h1, #productTitle, #ebooksProductTitle")
-            autor = self._extraer_texto(pagina, ".author a, #bylineInfo a, .contributorNameID")
+            titulo = self._extraer_texto(
+                pagina, "h1, .titulo-detalle, .product-title, .item-title"
+            )
+            autor = self._extraer_texto(
+                pagina, ".autor-detalle, .author-detail, .book-author"
+            )
             precio_texto = self._extraer_texto(pagina, self._selectores["precio"])
-            editorial = self._extraer_texto(pagina, "#detailBullets_feature_div, .publisher")
-            categoria = self._extraer_texto(pagina, ".a-breadcrumb a, .genre")
+            editorial = self._extraer_texto(pagina, self._selectores["editorial"])
+            isbn = self._extraer_texto(pagina, self._selectores["isbn"])
+            categoria = self._extraer_texto(pagina, self._selectores["categoria"])
 
             if not titulo:
                 self._logger.warning("No se encontro titulo en %s", url_libro)
                 return None
 
-            # Validar URL de compra: si no es valida, descartar silenciosamente
+            # Validar URL de compra
             url_compra = self._construir_url_absoluta(url_libro)
             if not self._validar_url_compra(url_compra):
                 self._logger.debug(
@@ -196,18 +212,16 @@ class ScraperPlataformaDigital(ScraperBase):
                 )
                 return None
 
-            # Los libros digitales siempre son formato ebook
-            formato = FormatoLibro.EBOOK
-
             libro = self._crear_libro(
                 titulo=titulo,
                 nombre_autor=autor or "Autor desconocido",
                 url_compra=url_compra,
-                estado=EstadoLibro.NUEVO,
+                estado=EstadoLibro.SEGUNDA_MANO,
                 precio=extraer_precio(precio_texto),
-                formato=formato,
+                formato=FormatoLibro.TAPA_BLANDA,
                 editorial=editorial,
                 categorias=[categoria] if categoria else [],
+                isbn=self._normalizar_isbn(isbn),
                 url_fuente=url_libro,
             )
             return libro
@@ -220,27 +234,27 @@ class ScraperPlataformaDigital(ScraperBase):
 
     async def obtener_ofertas(
         self,
-        precio_maximo: float = 3.0,
+        precio_maximo: float = 5.0,
         limite: int = 20,
     ) -> List[Libro]:
         """
-        Busca ebooks con precios muy bajos o gratuitos.
+        Busca libros de segunda mano con precios muy bajos.
 
-        Las plataformas digitales suelen tener mas ofertas que las
-        librerias fisicas, con ebooks desde 0.99 EUR o incluso gratuitos.
+        En plataformas de libros usados, los precios suelen ser ya reducidos,
+        por lo que este metodo filtra los mas economicos del catalogo.
 
         Parametros:
-            precio_maximo: Precio maximo para considerar oferta (por defecto 3 EUR).
+            precio_maximo: Precio maximo para considerar oferta (en la moneda local).
             limite: Numero maximo de resultados.
 
         Retorna:
-            Lista de ebooks en oferta ordenados por precio ascendente.
+            Lista de libros usados en oferta ordenados por precio ascendente.
         """
         url_ofertas = self._selectores.get("url_ofertas", "").format(
             url_base=self._url_base
         )
         self._logger.info(
-            "Buscando ofertas digitales en %s (precio maximo: %.2f)",
+            "Buscando ofertas de segunda mano en %s (precio maximo: %.2f)",
             self._nombre_fuente, precio_maximo,
         )
 
@@ -252,31 +266,13 @@ class ScraperPlataformaDigital(ScraperBase):
             return []
 
         filtro_ofertas = FiltroScraping(
-            termino_busqueda="ofertas ebook",
+            termino_busqueda="ofertas segunda mano",
             precio_maximo=precio_maximo,
             resultados_por_pagina=limite,
         )
 
         libros = self._parsear_resultados(pagina, filtro_ofertas)
-
-        # Ordenar por precio ascendente (los mas baratos primero)
-        libros_con_precio = [l for l in libros if l.calificacion is not None or True]
-        return libros_con_precio[:limite]
-
-    async def buscar_ebooks_gratuitos(self, limite: int = 20) -> List[Libro]:
-        """
-        Busca ebooks completamente gratuitos.
-
-        Muchas plataformas ofrecen libros clasicos o promocionales
-        de forma gratuita. Este metodo los localiza especificamente.
-
-        Parametros:
-            limite: Numero maximo de resultados.
-
-        Retorna:
-            Lista de ebooks gratuitos.
-        """
-        return await self.obtener_ofertas(precio_maximo=0.01, limite=limite)
+        return libros[:limite]
 
     # -- Metodos internos de parseo --
 
@@ -286,47 +282,47 @@ class ScraperPlataformaDigital(ScraperBase):
         filtro: FiltroScraping,
     ) -> List[Libro]:
         """
-        Parsea la pagina de resultados de la plataforma digital.
+        Parsea la pagina de resultados y extrae la lista de libros usados.
 
         Parametros:
             pagina: HTML parseado de la pagina de resultados.
-            filtro: Filtros a aplicar durante el parseo.
+            filtro: Filtros para aplicar durante el parseo.
 
         Retorna:
-            Lista de libros extraidos.
+            Lista de libros extraidos de la pagina.
         """
         libros = []
         contenedores = pagina.select(self._selectores["contenedor_libro"])
 
         for contenedor in contenedores:
             try:
-                libro = self._parsear_contenedor_digital(contenedor)
+                libro = self._parsear_contenedor_segunda_mano(contenedor)
                 if libro and self._cumple_filtros(libro, filtro):
                     libros.append(libro)
             except Exception as error:
                 self._logger.debug(
-                    "Error al parsear libro digital: %s", str(error)
+                    "Error al parsear libro de segunda mano: %s", str(error)
                 )
                 continue
 
         return libros
 
-    def _parsear_contenedor_digital(
+    def _parsear_contenedor_segunda_mano(
         self,
         contenedor: BeautifulSoup,
     ) -> Optional[Libro]:
         """
-        Extrae los datos de un ebook desde su contenedor HTML.
+        Extrae los datos de un libro de segunda mano desde su contenedor HTML.
 
         Descarta silenciosamente los libros que no tengan un enlace
         valido (href real que apunte a una URL absoluta).
 
         Parametros:
-            contenedor: Elemento HTML que contiene los datos del ebook.
+            contenedor: Elemento HTML que contiene los datos del libro.
 
         Retorna:
-            Libro extraido, o None si no se obtuvieron datos minimos
-            o si el enlace de compra no es valido.
+            Libro extraido con estado "De segunda mano", o None si no se
+            pudieron obtener los datos minimos o el enlace no es valido.
         """
         titulo = self._extraer_texto(contenedor, self._selectores["titulo"])
         if not titulo:
@@ -334,18 +330,14 @@ class ScraperPlataformaDigital(ScraperBase):
 
         autor = self._extraer_texto(contenedor, self._selectores["autor"])
         precio_texto = self._extraer_texto(contenedor, self._selectores["precio"])
-        precio_oferta_texto = self._extraer_texto(
-            contenedor, self._selectores["precio_oferta"]
-        )
         editorial = self._extraer_texto(contenedor, self._selectores["editorial"])
         categoria = self._extraer_texto(contenedor, self._selectores["categoria"])
         formato_texto = self._extraer_texto(contenedor, self._selectores["formato"])
 
-        # Preferir precio de oferta
-        precio = extraer_precio(precio_oferta_texto) or extraer_precio(precio_texto)
+        precio = extraer_precio(precio_texto)
 
-        # En plataformas digitales, el formato por defecto es ebook
-        formato = self._determinar_formato_digital(formato_texto)
+        # Determinar formato
+        formato = self._determinar_formato(formato_texto)
 
         # Extraer URL real del enlace (atributo href)
         enlace = contenedor.select_one(self._selectores["enlace"])
@@ -356,7 +348,8 @@ class ScraperPlataformaDigital(ScraperBase):
         # Descarte silencioso: si no hay URL de compra valida, omitir el libro
         if not self._validar_url_compra(url_compra):
             self._logger.debug(
-                "Descartado libro digital '%s': sin enlace de compra valido", titulo
+                "Descartado libro de segunda mano '%s': sin enlace de compra valido",
+                titulo,
             )
             return None
 
@@ -366,72 +359,45 @@ class ScraperPlataformaDigital(ScraperBase):
         if imagen:
             imagen_url = imagen.get("src") or imagen.get("data-src")
 
-        # Extraer calificacion
-        calificacion = self._extraer_calificacion(contenedor)
+        # Extraer ISBN si esta disponible
+        isbn_texto = self._extraer_texto(contenedor, self._selectores["isbn"])
+        isbn = self._normalizar_isbn(isbn_texto)
 
         return self._crear_libro(
             titulo=titulo,
             nombre_autor=autor or "Autor desconocido",
             url_compra=url_compra,
-            estado=EstadoLibro.NUEVO,
+            estado=EstadoLibro.SEGUNDA_MANO,
             precio=precio,
             formato=formato,
             editorial=editorial,
             categorias=[categoria] if categoria else [],
+            isbn=isbn,
             imagen_url=imagen_url,
             url_fuente=url_compra,
-            calificacion=calificacion,
         )
 
-    def _determinar_formato_digital(self, texto: Optional[str]) -> FormatoLibro:
+    def _determinar_formato(self, texto_formato: Optional[str]) -> FormatoLibro:
         """
-        Determina el formato digital del libro.
+        Determina el formato del libro a partir de su descripcion textual.
 
         Parametros:
-            texto: Texto que describe el formato.
+            texto_formato: Texto que describe el formato.
 
         Retorna:
-            FormatoLibro correspondiente (por defecto EBOOK).
+            FormatoLibro correspondiente.
         """
-        if not texto:
-            return FormatoLibro.EBOOK
+        if not texto_formato:
+            return FormatoLibro.OTRO
 
-        texto_lower = texto.lower()
-        if "audiolibro" in texto_lower or "audiobook" in texto_lower or "audio" in texto_lower:
-            return FormatoLibro.AUDIOLIBRO
-        elif "tapa dura" in texto_lower or "hardcover" in texto_lower:
+        texto = texto_formato.lower()
+        if "tapa dura" in texto or "hardcover" in texto or "carton" in texto:
             return FormatoLibro.TAPA_DURA
-        elif "tapa blanda" in texto_lower or "paperback" in texto_lower:
+        elif "tapa blanda" in texto or "paperback" in texto or "rustica" in texto:
             return FormatoLibro.TAPA_BLANDA
-
-        return FormatoLibro.EBOOK
-
-    def _extraer_calificacion(self, contenedor: BeautifulSoup) -> Optional[float]:
-        """
-        Extrae la calificacion numerica de un libro.
-
-        Parametros:
-            contenedor: Elemento HTML donde buscar la calificacion.
-
-        Retorna:
-            Calificacion como float (0.0 a 5.0), o None.
-        """
-        selector_cal = self._selectores.get("calificacion", "")
-        texto = self._extraer_texto(contenedor, selector_cal)
-        if not texto:
-            return None
-
-        import re
-        # Buscar patrones como "4.5 de 5", "4,5 out of 5", "4.5"
-        patron = re.search(r"(\d[.,]\d)", texto)
-        if patron:
-            try:
-                valor = float(patron.group(1).replace(",", "."))
-                if 0.0 <= valor <= 5.0:
-                    return valor
-            except ValueError:
-                pass
-        return None
+        elif "bolsillo" in texto or "pocket" in texto:
+            return FormatoLibro.BOLSILLO
+        return FormatoLibro.OTRO
 
     def _cumple_filtros(self, libro: Libro, filtro: FiltroScraping) -> bool:
         """
@@ -442,14 +408,16 @@ class ScraperPlataformaDigital(ScraperBase):
             filtro: Criterios de filtrado.
 
         Retorna:
-            True si el libro cumple todos los filtros.
+            True si el libro cumple todos los filtros, False en caso contrario.
         """
+        # Filtro por categoria
         if filtro.categoria and libro.categorias:
             if not any(
                 filtro.categoria.lower() in cat.lower() for cat in libro.categorias
             ):
                 return False
 
+        # Filtro por idioma
         if filtro.idioma and libro.idioma:
             if filtro.idioma.lower() not in libro.idioma.lower():
                 return False
@@ -474,4 +442,22 @@ class ScraperPlataformaDigital(ScraperBase):
         encontrado = elemento.select_one(selector)
         if encontrado:
             return limpiar_texto(encontrado.get_text())
+        return None
+
+    def _normalizar_isbn(self, isbn: Optional[str]) -> Optional[str]:
+        """
+        Normaliza un ISBN eliminando guiones y espacios.
+
+        Parametros:
+            isbn: ISBN en cualquier formato.
+
+        Retorna:
+            ISBN limpio (solo digitos), o None si no es valido.
+        """
+        if not isbn:
+            return None
+        import re
+        limpio = re.sub(r"[^0-9]", "", isbn)
+        if len(limpio) in (10, 13):
+            return limpio
         return None

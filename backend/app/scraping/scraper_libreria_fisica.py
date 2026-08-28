@@ -3,7 +3,8 @@ Scraper para librerias fisicas (tiendas en linea de librerias tradicionales).
 
 Implementa la logica de scraping especifica para sitios web de librerias
 fisicas como Casa del Libro, Libreria Nacional, etc.
-Extrae: titulo, autor, precio, formato, genero, pais y editorial.
+Extrae: titulo, autor, precio, formato, genero, pais, editorial,
+url de compra real y estado del libro.
 """
 
 import logging
@@ -13,6 +14,7 @@ from urllib.parse import quote_plus
 from bs4 import BeautifulSoup
 
 from app.modelos import Libro, FiltroScraping
+from app.modelos.libro import EstadoLibro
 from app.modelos.edicion import FormatoLibro, EstadoDisponibilidad, Edicion
 from app.scraping.base import ScraperBase
 from app.scraping.utilidades import limpiar_texto, extraer_precio
@@ -174,9 +176,19 @@ class ScraperLibreriaFisica(ScraperBase):
                 self._logger.warning("No se encontro titulo en %s", url_libro)
                 return None
 
+            # Validar URL de compra: si no es valida, descartar silenciosamente
+            url_compra = self._construir_url_absoluta(url_libro)
+            if not self._validar_url_compra(url_compra):
+                self._logger.debug(
+                    "Descartado libro '%s': URL de compra no valida", titulo
+                )
+                return None
+
             libro = self._crear_libro(
                 titulo=titulo,
                 nombre_autor=autor or "Autor desconocido",
+                url_compra=url_compra,
+                estado=EstadoLibro.NUEVO,
                 precio=extraer_precio(precio_texto),
                 formato=FormatoLibro.TAPA_BLANDA,
                 editorial=editorial,
@@ -273,11 +285,15 @@ class ScraperLibreriaFisica(ScraperBase):
         """
         Extrae los datos de un libro desde su contenedor HTML.
 
+        Descarta silenciosamente los libros que no tengan un enlace
+        valido (href real que apunte a una URL absoluta).
+
         Parametros:
             contenedor: Elemento HTML que contiene los datos del libro.
 
         Retorna:
-            Libro extraido, o None si no se pudieron obtener los datos minimos.
+            Libro extraido, o None si no se pudieron obtener los datos minimos
+            o si el enlace de compra no es valido.
         """
         titulo = self._extraer_texto(contenedor, self._selectores["titulo"])
         if not titulo:
@@ -296,12 +312,18 @@ class ScraperLibreriaFisica(ScraperBase):
         # Determinar formato
         formato = self._determinar_formato(formato_texto)
 
-        # Extraer URL del enlace
+        # Extraer URL real del enlace (atributo href)
         enlace = contenedor.select_one(self._selectores["enlace"])
-        url_libro = None
+        url_compra = None
         if enlace and enlace.get("href"):
-            href = enlace["href"]
-            url_libro = href if href.startswith("http") else f"{self._url_base}{href}"
+            url_compra = self._construir_url_absoluta(enlace["href"])
+
+        # Descarte silencioso: si no hay URL de compra valida, omitir el libro
+        if not self._validar_url_compra(url_compra):
+            self._logger.debug(
+                "Descartado libro '%s': sin enlace de compra valido", titulo
+            )
+            return None
 
         # Extraer imagen
         imagen = contenedor.select_one(self._selectores["imagen"])
@@ -312,12 +334,14 @@ class ScraperLibreriaFisica(ScraperBase):
         return self._crear_libro(
             titulo=titulo,
             nombre_autor=autor or "Autor desconocido",
+            url_compra=url_compra,
+            estado=EstadoLibro.NUEVO,
             precio=precio,
             formato=formato,
             editorial=editorial,
             categorias=[categoria] if categoria else [],
             imagen_url=imagen_url,
-            url_fuente=url_libro,
+            url_fuente=url_compra,
         )
 
     def _determinar_formato(self, texto_formato: Optional[str]) -> FormatoLibro:

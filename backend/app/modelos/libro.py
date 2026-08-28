@@ -5,9 +5,17 @@ Representa un libro obtenido mediante web scraping, con toda la informacion
 relevante para la busqueda y comparacion de precios.
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List
+from enum import Enum
 from .autor import Autor
+
+
+class EstadoLibro(str, Enum):
+    """Estados posibles del libro segun su condicion fisica."""
+
+    NUEVO = "Nuevo"
+    SEGUNDA_MANO = "De segunda mano"
 
 
 class Libro(BaseModel):
@@ -25,6 +33,8 @@ class Libro(BaseModel):
         idioma: Idioma principal del libro (opcional).
         calificacion: Puntuacion promedio del libro (opcional, de 0.0 a 5.0).
         url_fuente: Enlace a la pagina original de donde se extrajo el libro.
+        url_compra: Enlace directo real para adquirir el libro.
+        estado: Condicion fisica del libro (Nuevo o De segunda mano).
     """
 
     titulo: str = Field(
@@ -80,6 +90,26 @@ class Libro(BaseModel):
         default=None,
         description="Enlace a la pagina original de donde se extrajo el libro",
     )
+    url_compra: str = Field(
+        ...,
+        min_length=1,
+        description="Enlace directo real para adquirir el libro",
+        examples=["https://www.casadellibro.com/libro/cien-anos-de-soledad/123"],
+    )
+    estado: EstadoLibro = Field(
+        default=EstadoLibro.NUEVO,
+        description="Condicion fisica del libro: Nuevo o De segunda mano",
+    )
+
+    @field_validator("url_compra")
+    @classmethod
+    def validar_url_compra(cls, valor: str) -> str:
+        """Valida que la URL de compra sea una direccion HTTP absoluta."""
+        if not valor.startswith(("http://", "https://")):
+            raise ValueError(
+                "La URL de compra debe ser una direccion absoluta que comience con http:// o https://"
+            )
+        return valor
 
     class Config:
         """Configuracion del modelo Libro."""
@@ -100,5 +130,7 @@ class Libro(BaseModel):
                 "idioma": "Espanol",
                 "calificacion": 4.8,
                 "url_fuente": "https://ejemplo.com/libros/cien-anos-de-soledad",
+                "url_compra": "https://www.casadellibro.com/libro/cien-anos-de-soledad/123",
+                "estado": "Nuevo",
             }
         }

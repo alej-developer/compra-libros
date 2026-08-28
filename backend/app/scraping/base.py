@@ -10,8 +10,10 @@ from abc import ABC, abstractmethod
 import logging
 from typing import List, Optional
 from datetime import date
+from urllib.parse import urljoin
 
 from app.modelos import Libro, Autor, Edicion, FiltroScraping
+from app.modelos.libro import EstadoLibro
 from app.modelos.edicion import FormatoLibro, EstadoDisponibilidad
 from app.scraping.utilidades import (
     ClienteHttp,
@@ -38,7 +40,7 @@ class ScraperBase(ABC):
     Atributos protegidos:
         _nombre_fuente: Nombre identificador de la fuente de datos.
         _url_base: URL raiz del sitio web a scrapear.
-        _tipo_fuente: Tipo de fuente ('fisica' o 'digital').
+        _tipo_fuente: Tipo de fuente ('fisica', 'digital' o 'segunda_mano').
         _pais: Pais de origen de la tienda.
         _cliente: Cliente HTTP con medidas de seguridad.
         _logger: Logger especifico para esta fuente.
@@ -57,7 +59,8 @@ class ScraperBase(ABC):
         Parametros:
             nombre_fuente: Nombre identificador de la fuente.
             url_base: URL raiz del sitio web objetivo.
-            tipo_fuente: 'fisica' para librerias fisicas, 'digital' para plataformas digitales.
+            tipo_fuente: 'fisica' para librerias fisicas, 'digital' para plataformas digitales,
+                         'segunda_mano' para librerias de libros usados.
             pais: Pais de origen de la tienda.
         """
         self._nombre_fuente = nombre_fuente
@@ -84,7 +87,7 @@ class ScraperBase(ABC):
 
     @property
     def tipo_fuente(self) -> str:
-        """Tipo de fuente: 'fisica' o 'digital'."""
+        """Tipo de fuente: 'fisica', 'digital' o 'segunda_mano'."""
         return self._tipo_fuente
 
     @property
@@ -159,10 +162,48 @@ class ScraperBase(ABC):
 
     # -- Metodos protegidos compartidos --
 
+    def _construir_url_absoluta(self, href: Optional[str]) -> Optional[str]:
+        """
+        Convierte una URL relativa en absoluta usando la URL base del scraper.
+
+        Si la URL ya es absoluta (comienza con http:// o https://), se retorna
+        tal cual. Si es relativa, se concatena con la URL base del scraper.
+
+        Parametros:
+            href: URL extraida del atributo href de un enlace HTML.
+
+        Retorna:
+            URL absoluta completa, o None si href es None o vacio.
+        """
+        if not href or not href.strip():
+            return None
+        href = href.strip()
+        if href.startswith(("http://", "https://")):
+            return href
+        return urljoin(self._url_base + "/", href.lstrip("/"))
+
+    def _validar_url_compra(self, url: Optional[str]) -> bool:
+        """
+        Verifica si una URL de compra es valida para ser incluida en los resultados.
+
+        Una URL se considera valida si no es None y comienza con http:// o https://.
+
+        Parametros:
+            url: URL a validar.
+
+        Retorna:
+            True si la URL es valida, False en caso contrario.
+        """
+        if not url:
+            return False
+        return url.startswith(("http://", "https://"))
+
     def _crear_libro(
         self,
         titulo: str,
         nombre_autor: str,
+        url_compra: str,
+        estado: EstadoLibro = EstadoLibro.NUEVO,
         precio: Optional[float] = None,
         formato: FormatoLibro = FormatoLibro.OTRO,
         editorial: Optional[str] = None,
@@ -183,6 +224,8 @@ class ScraperBase(ABC):
         Parametros:
             titulo: Titulo del libro.
             nombre_autor: Nombre del autor.
+            url_compra: Enlace directo real para adquirir el libro.
+            estado: Condicion fisica del libro (Nuevo o De segunda mano).
             precio: Precio del libro (opcional).
             formato: Formato del libro.
             editorial: Nombre de la editorial (opcional).
@@ -211,6 +254,8 @@ class ScraperBase(ABC):
             url_fuente=url_fuente,
             idioma=idioma,
             calificacion=calificacion,
+            url_compra=url_compra,
+            estado=estado,
         )
 
         return libro
@@ -265,3 +310,4 @@ class ScraperBase(ABC):
             f"tipo='{self._tipo_fuente}', "
             f"pais='{self._pais}')"
         )
+
