@@ -297,9 +297,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Editorial
             const editorial = libro.editorial || 'Editorial independiente';
 
-            // Enlace de compra o consulta
-            const urlDestino = libro.url_fuente || (ediciones[0] && ediciones[0].url_compra) || '#';
-            const nombreTienda = (ediciones[0] && ediciones[0].tienda) || 'Ver oferta';
+            // Estado del libro (Nuevo / De segunda mano)
+            const estadoLibro = libro.estado || 'Nuevo';
+            const esSegundaMano = estadoLibro === 'De segunda mano';
+
+            // Enlace de compra real
+            const urlCompra = libro.url_compra || libro.url_fuente || (ediciones[0] && ediciones[0].url_compra) || '#';
+            const nombreTienda = (ediciones[0] && ediciones[0].tienda) || '';
 
             // Generar HTML de la tarjeta
             tarjeta.innerHTML = `
@@ -307,8 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span class="tarjeta-libro__formato ${esDigital ? 'tarjeta-libro__formato--digital' : 'tarjeta-libro__formato--fisico'}">
                         ${formatoTexto}
                     </span>
+                    <span class="tarjeta-libro__estado ${esSegundaMano ? 'tarjeta-libro__estado--usado' : 'tarjeta-libro__estado--nuevo'}">
+                        ${escaparHtml(estadoLibro)}
+                    </span>
                     ${esIndependiente ? `
-                        <span class="tarjeta-libro__independiente" title="Puntuación de independencia: ${puntuacionIndie}/100">
+                        <span class="tarjeta-libro__independiente" title="Puntuacion de independencia: ${puntuacionIndie}/100">
                             Autor emergente
                         </span>
                     ` : ''}
@@ -339,14 +346,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="tarjeta-libro__precio ${precioTexto.esNumero ? '' : 'tarjeta-libro__precio--sin-dato'}">
                             ${precioTexto.texto}
                         </div>
+                        ${nombreTienda ? `<span class="tarjeta-libro__nombre-tienda">${escaparHtml(nombreTienda)}</span>` : ''}
                     </div>
                     <div class="tarjeta-libro__tienda">
-                        ${urlDestino !== '#' ? `
-                            <a href="${urlDestino}" target="_blank" rel="noopener noreferrer" class="tarjeta-libro__enlace">
-                                ${escaparHtml(nombreTienda)} &rarr;
+                        ${urlCompra !== '#' ? `
+                            <a href="${urlCompra}" target="_blank" rel="noopener noreferrer" class="tarjeta-libro__enlace">
+                                Ver ejemplar &rarr;
                             </a>
                         ` : `
-                            <span class="tarjeta-libro__enlace">${escaparHtml(nombreTienda)}</span>
+                            <span class="tarjeta-libro__enlace tarjeta-libro__enlace--inactivo">Sin enlace</span>
                         `}
                     </div>
                 </div>

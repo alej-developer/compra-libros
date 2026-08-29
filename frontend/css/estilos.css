@@ -382,8 +382,17 @@ body {
 }
 
 @keyframes pulsar-pagina {
-    0%, 100% { opacity: 0.4; transform: scaleY(1); }
-    50% { opacity: 1; transform: scaleY(1.15); }
+
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scaleY(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scaleY(1.15);
+    }
 }
 
 .estado-carga__texto {
@@ -526,6 +535,29 @@ body {
     white-space: nowrap;
 }
 
+/* Indicador de estado: Nuevo / De segunda mano */
+.tarjeta-libro__estado {
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    padding: 0.15rem 0.45rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-style: italic;
+}
+
+.tarjeta-libro__estado--nuevo {
+    color: var(--color-acento-verde);
+    background-color: rgba(107, 142, 107, 0.08);
+    border: 1px solid rgba(107, 142, 107, 0.15);
+}
+
+.tarjeta-libro__estado--usado {
+    color: var(--color-acento-ocre);
+    background-color: rgba(184, 134, 11, 0.07);
+    border: 1px solid rgba(184, 134, 11, 0.15);
+}
+
 .tarjeta-libro__cuerpo {
     padding: 0.25rem 1rem 1rem;
     flex: 1;
@@ -591,6 +623,15 @@ body {
     color: var(--color-texto-tenue);
 }
 
+/* Nombre de la tienda debajo del precio */
+.tarjeta-libro__nombre-tienda {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--color-texto-tenue);
+    margin-top: 0.15rem;
+    font-style: italic;
+}
+
 .tarjeta-libro__tienda {
     font-size: 0.75rem;
     color: var(--color-texto-tenue);
@@ -604,11 +645,21 @@ body {
     color: var(--color-madera);
     text-decoration: none;
     transition: color 0.2s;
+    padding: 0.2rem 0;
+    border-bottom: 1px solid transparent;
 }
 
 .tarjeta-libro__enlace:hover {
     color: var(--color-madera-oscura);
-    text-decoration: underline;
+    border-bottom-color: var(--color-madera-clara);
+}
+
+/* Enlace inactivo cuando no hay URL */
+.tarjeta-libro__enlace--inactivo {
+    color: var(--color-texto-tenue);
+    font-style: italic;
+    font-weight: 400;
+    cursor: default;
 }
 
 /* -- Tarjeta de libro (modo lista) -- */
@@ -789,6 +840,10 @@ body {
 
 .pie__fuente--digital {
     border-left: 3px solid var(--color-acento-azul);
+}
+
+.pie__fuente--segunda_mano {
+    border-left: 3px solid var(--color-acento-ocre);
 }
 
 /* -- Responsivo -- */
