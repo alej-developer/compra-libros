@@ -1,9 +1,9 @@
 """
-Scraper para librerias fisicas (tiendas en linea de librerias tradicionales).
+Scraper para librerías físicas (tiendas en línea de librerías tradicionales).
 
-Implementa la logica de scraping especifica para sitios web de librerias
-fisicas como Casa del Libro, Libreria Nacional, etc.
-Extrae: titulo, autor, precio, formato, genero, pais, editorial,
+Implementa la lógica de scraping específica para sitios web de librerías
+físicas como Casa del Libro, Librería Nacional, etc.
+Extrae: título, autor, precio, formato, género, país, editorial,
 url de compra real y estado del libro.
 """
 

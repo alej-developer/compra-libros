@@ -1,8 +1,8 @@
 /**
- * Logica principal de la interfaz de usuario para Mi Rincon de Libros.
- * Controla eventos de navegacion, busquedas, filtros y renderizado
- * en cuadricula o lista. Muestra el estado del libro (Nuevo / De segunda
- * mano) y enlaza directamente a la pagina de compra sin rastreo alguno.
+ * Lógica principal de la interfaz de usuario para Mi Rincón de Libros.
+ * Controla eventos de navegación, búsquedas, filtros y renderizado
+ * en cuadrícula o lista. Muestra el estado del libro (Nuevo / De segunda
+ * mano) y enlaza directamente a la página de compra sin rastreo alguno.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -316,7 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${escaparHtml(estadoLibro)}
                     </span>
                     ${esIndependiente ? `
-                        <span class="tarjeta-libro__independiente" title="Puntuacion de independencia: ${puntuacionIndie}/100">
+                        <span class="tarjeta-libro__independiente" title="Puntuación de independencia: ${puntuacionIndie}/100">
                             Autor emergente
                         </span>
                     ` : ''}

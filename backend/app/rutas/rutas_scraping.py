@@ -4,7 +4,7 @@ Rutas (endpoints) del motor de scraping.
 Define los endpoints de la API para buscar libros, obtener ofertas
 y filtrar autores independientes. Los resultados incluyen enlaces
 directos de compra (url_compra) y el estado del libro (Nuevo o
-De segunda mano), provenientes de librerias fisicas, plataformas
+De segunda mano), provenientes de librerías físicas, plataformas
 digitales y vendedores de segunda mano.
 """
 
@@ -31,7 +31,7 @@ router = APIRouter(
 @router.get(
     "/fuentes",
     summary="Listar fuentes disponibles",
-    description="Retorna la lista de scrapers registrados con su informacion.",
+    description="Retorna la lista de scrapers registrados con su información.",
 )
 async def listar_fuentes():
     """Retorna la lista de fuentes de scraping disponibles."""
@@ -46,8 +46,8 @@ async def listar_fuentes():
     response_model=ResultadoBusqueda,
     summary="Buscar libros",
     description=(
-        "Busca libros en todas las fuentes registradas segun los filtros "
-        "proporcionados. Ejecuta las busquedas en paralelo y consolida "
+        "Busca libros en todas las fuentes registradas según los filtros "
+        "proporcionados. Ejecuta las búsquedas en paralelo y consolida "
         "los resultados eliminando duplicados."
     ),
 )
@@ -55,8 +55,8 @@ async def buscar_libros(filtro: FiltroScraping) -> ResultadoBusqueda:
     """
     Busca libros en todas las fuentes registradas.
 
-    Parametros:
-        filtro: Criterios de busqueda y filtraje (en el cuerpo de la peticion).
+    Parámetros:
+        filtro: Criterios de búsqueda y filtraje (en el cuerpo de la petición).
 
     Retorna:
         ResultadoBusqueda con los libros encontrados.
@@ -77,21 +77,21 @@ async def buscar_ofertas(
     precio_maximo: float = Query(
         default=10.0,
         ge=0.0,
-        description="Precio maximo para considerar oferta (en EUR)",
+        description="Precio máximo para considerar oferta (en EUR)",
     ),
     limite: int = Query(
         default=50,
         ge=1,
         le=200,
-        description="Numero maximo de resultados",
+        description="Número máximo de resultados",
     ),
 ) -> ResultadoBusqueda:
     """
     Busca libros en oferta en todas las fuentes.
 
-    Parametros:
-        precio_maximo: Precio maximo para considerar una oferta.
-        limite: Numero maximo de resultados a retornar.
+    Parámetros:
+        precio_maximo: Precio máximo para considerar una oferta.
+        limite: Número máximo de resultados a retornar.
 
     Retorna:
         ResultadoBusqueda con los libros en oferta.
@@ -108,8 +108,8 @@ async def buscar_ofertas(
     summary="Buscar autores independientes",
     description=(
         "Busca libros priorizando autores poco conocidos o independientes. "
-        "Utiliza un algoritmo que cruza el numero de resenas, la popularidad "
-        "del sello editorial y otros indicadores para asignar una puntuacion "
+        "Utiliza un algoritmo que cruza el número de reseñas, la popularidad "
+        "del sello editorial y otros indicadores para asignar una puntuación "
         "de independencia (0-100) a cada libro."
     ),
 )
@@ -119,15 +119,15 @@ async def buscar_autores_independientes(
         default=50.0,
         ge=0.0,
         le=100.0,
-        description="Puntuacion minima de independencia (0-100)",
+        description="Puntuación mínima de independencia (0-100)",
     ),
 ) -> ResultadoBusqueda:
     """
     Busca libros de autores independientes o poco conocidos.
 
-    Parametros:
-        filtro: Criterios de busqueda (en el cuerpo de la peticion).
-        puntuacion_minima: Puntuacion minima de independencia.
+    Parámetros:
+        filtro: Criterios de búsqueda (en el cuerpo de la petición).
+        puntuacion_minima: Puntuación mínima de independencia.
 
     Retorna:
         ResultadoBusqueda con libros de autores independientes.

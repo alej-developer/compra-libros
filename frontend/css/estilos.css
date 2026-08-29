@@ -4,7 +4,7 @@
    Estética de salón de lectura casero, minimalista y funcional.
    ============================================================================= */
 
-/* -- Variables de diseno -- */
+/* -- Variables de diseño -- */
 :root {
     /* Colores principales */
     --color-fondo: #F5F0E8;
@@ -36,7 +36,7 @@
     --color-sombra: rgba(90, 75, 55, 0.08);
     --color-sombra-fuerte: rgba(90, 75, 55, 0.15);
 
-    /* Tipografias */
+    /* Tipografías */
     --fuente-titulo: 'Lora', 'Georgia', serif;
     --fuente-cuerpo: 'Source Sans 3', 'Segoe UI', sans-serif;
 
@@ -467,7 +467,7 @@ body {
     border-color: var(--color-madera-clara);
 }
 
-/* -- Resultados: Cuadricula -- */
+/* -- Resultados: Cuadrícula -- */
 .resultados--cuadricula {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -481,7 +481,7 @@ body {
     gap: 0.85rem;
 }
 
-/* -- Tarjeta de libro (cuadricula) -- */
+/* -- Tarjeta de libro (cuadrícula) -- */
 .tarjeta-libro {
     background-color: var(--color-tarjeta);
     border: 1px solid var(--color-borde-suave);
@@ -715,7 +715,7 @@ body {
     gap: 0.35rem;
 }
 
-/* -- Puntuacion de independencia -- */
+/* -- Puntuación de independencia -- */
 .puntuacion-independencia {
     display: flex;
     align-items: center;
@@ -744,7 +744,7 @@ body {
     font-weight: 600;
 }
 
-/* -- Calificacion con estrellas -- */
+/* -- Calificación con estrellas -- */
 .calificacion {
     display: inline-flex;
     align-items: center;
@@ -797,7 +797,7 @@ body {
     background-color: var(--color-madera-oscura);
 }
 
-/* -- Pie de pagina -- */
+/* -- Pie de página -- */
 .pie {
     background-color: var(--color-pergamino);
     border-top: 1px solid var(--color-borde);

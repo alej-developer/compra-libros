@@ -1,9 +1,9 @@
 """
 Scraper para plataformas digitales (Kindle, Google Books, etc.).
 
-Implementa la logica de scraping especifica para tiendas de libros
-digitales (ebooks, audiolibros). Extrae: titulo, autor, precio,
-formato digital, genero, pais, editorial, url de compra real y estado.
+Implementa la lógica de scraping específica para tiendas de libros
+digitales (ebooks, audiolibros). Extrae: título, autor, precio,
+formato digital, género, país, editorial, url de compra real y estado.
 """
 
 import logging

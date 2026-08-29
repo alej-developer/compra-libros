@@ -1,1 +1,1 @@
-# Paquete principal de la aplicacion de scraping de libros
+# Paquete principal de la aplicación de scraping de libros

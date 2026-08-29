@@ -1,8 +1,8 @@
 """
 Servidor principal de la API de Scraping de Libros.
 
-Punto de entrada de la aplicacion FastAPI. Configura la instancia
-de la aplicacion, registra los middlewares de CORS y define las
+Punto de entrada de la aplicación FastAPI. Configura la instancia
+de la aplicación, registra los middlewares de CORS y define las
 rutas base del sistema.
 """
 
@@ -14,13 +14,13 @@ from app.configuracion import configuracion
 
 def crear_aplicacion() -> FastAPI:
     """
-    Fabrica de la aplicacion FastAPI.
+    Fábrica de la aplicación FastAPI.
 
-    Crea y configura la instancia principal de la aplicacion,
+    Crea y configura la instancia principal de la aplicación,
     incluyendo metadatos, middlewares y rutas.
 
     Retorna:
-        FastAPI: Instancia configurada de la aplicacion.
+        FastAPI: Instancia configurada de la aplicación.
     """
     aplicacion = FastAPI(
         title=configuracion.nombre_app,
@@ -30,9 +30,9 @@ def crear_aplicacion() -> FastAPI:
         redoc_url="/redoc",
     )
 
-    # -- Configuracion de CORS --
-    # Permite la comunicacion segura entre el frontend y el backend.
-    # Los origenes permitidos se definen en la configuracion central.
+    # -- Configuración de CORS --
+    # Permite la comunicación segura entre el frontend y el backend.
+    # Los orígenes permitidos se definen en la configuración central.
     aplicacion.add_middleware(
         CORSMiddleware,
         allow_origins=configuracion.origenes_permitidos,
@@ -55,12 +55,12 @@ def crear_aplicacion() -> FastAPI:
 
 def _registrar_rutas(aplicacion: FastAPI) -> None:
     """
-    Registra todas las rutas de la aplicacion.
+    Registra todas las rutas de la aplicación.
 
-    Incluye las rutas base (raiz, salud) y los routers de cada modulo
+    Incluye las rutas base (raíz, salud) y los routers de cada módulo
     funcional (scraping, etc.).
 
-    Parametros:
+    Parámetros:
         aplicacion: Instancia de FastAPI donde se registran las rutas.
     """
     # Registrar router del motor de scraping
@@ -69,8 +69,8 @@ def _registrar_rutas(aplicacion: FastAPI) -> None:
 
     @aplicacion.get(
         "/",
-        summary="Raiz de la API",
-        description="Endpoint de bienvenida que confirma que la API esta activa.",
+        summary="Raíz de la API",
+        description="Endpoint de bienvenida que confirma que la API está activa.",
         tags=["General"],
     )
     async def raiz():
@@ -84,8 +84,8 @@ def _registrar_rutas(aplicacion: FastAPI) -> None:
 
     @aplicacion.get(
         "/salud",
-        summary="Verificacion de salud",
-        description="Endpoint para verificar que el servidor esta funcionando correctamente.",
+        summary="Verificación de salud",
+        description="Endpoint para verificar que el servidor está funcionando correctamente.",
         tags=["General"],
     )
     async def verificar_salud():

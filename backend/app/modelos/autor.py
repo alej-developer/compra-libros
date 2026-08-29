@@ -1,8 +1,8 @@
 """
 Modelo de datos: Autor
 
-Representa a un autor de libros con su informacion biografica basica.
-Utiliza Pydantic para la validacion automatica de datos.
+Representa a un autor de libros con su información biográfica básica.
+Utiliza Pydantic para la validación automática de datos.
 """
 
 from pydantic import BaseModel, Field
@@ -15,8 +15,8 @@ class Autor(BaseModel):
 
     Atributos:
         nombre: Nombre completo del autor.
-        nacionalidad: Pais de origen del autor (opcional).
-        biografia: Resumen biografico del autor (opcional).
+        nacionalidad: País de origen del autor (opcional).
+        biografia: Resumen biográfico del autor (opcional).
         url_perfil: Enlace al perfil del autor en la fuente de scraping (opcional).
     """
 
@@ -25,18 +25,18 @@ class Autor(BaseModel):
         min_length=1,
         max_length=200,
         description="Nombre completo del autor",
-        examples=["Gabriel Garcia Marquez"],
+        examples=["Gabriel García Márquez"],
     )
     nacionalidad: Optional[str] = Field(
         default=None,
         max_length=100,
-        description="Pais de origen del autor",
+        description="País de origen del autor",
         examples=["Colombia"],
     )
     biografia: Optional[str] = Field(
         default=None,
         max_length=5000,
-        description="Resumen biografico del autor",
+        description="Resumen biográfico del autor",
     )
     url_perfil: Optional[str] = Field(
         default=None,
@@ -44,7 +44,7 @@ class Autor(BaseModel):
     )
 
     class Config:
-        """Configuracion del modelo Autor."""
+        """Configuración del modelo Autor."""
 
         json_schema_extra = {
             "example": {

@@ -1,8 +1,8 @@
 """
 Modelo de datos: ResultadoBusqueda
 
-Encapsula los resultados de una operacion de scraping, incluyendo
-los libros encontrados, metadatos de la busqueda y estadisticas.
+Encapsula los resultados de una operación de scraping, incluyendo
+los libros encontrados, metadatos de la búsqueda y estadísticas.
 """
 
 from pydantic import BaseModel, Field
@@ -20,9 +20,9 @@ class LibroConEdiciones(BaseModel):
     Atributos:
         libro: Datos del libro.
         ediciones: Lista de ediciones disponibles en diferentes tiendas.
-        numero_resenas: Cantidad de resenas (para el algoritmo de filtrado).
+        numero_resenas: Cantidad de reseñas (para el algoritmo de filtrado).
         es_autor_independiente: Indica si el autor se considera independiente.
-        puntuacion_independencia: Puntuacion calculada por el algoritmo de filtrado.
+        puntuacion_independencia: Puntuación calculada por el algoritmo de filtrado.
     """
 
     libro: Libro
@@ -30,7 +30,7 @@ class LibroConEdiciones(BaseModel):
     numero_resenas: Optional[int] = Field(
         default=None,
         ge=0,
-        description="Cantidad de resenas del libro (para algoritmo de filtrado)",
+        description="Cantidad de reseñas del libro (para algoritmo de filtrado)",
     )
     es_autor_independiente: bool = Field(
         default=False,
@@ -40,23 +40,23 @@ class LibroConEdiciones(BaseModel):
         default=0.0,
         ge=0.0,
         le=100.0,
-        description="Puntuacion del algoritmo de filtrado (0-100, mayor = mas independiente)",
+        description="Puntuación del algoritmo de filtrado (0-100, mayor = más independiente)",
     )
 
     @property
     def precio_minimo(self) -> Optional[float]:
-        """Retorna el precio mas bajo entre todas las ediciones disponibles."""
+        """Retorna el precio más bajo entre todas las ediciones disponibles."""
         precios = [e.precio for e in self.ediciones if e.precio is not None]
         return min(precios) if precios else None
 
     class Config:
-        """Configuracion del modelo."""
+        """Configuración del modelo."""
 
         json_schema_extra = {
             "example": {
                 "libro": {
-                    "titulo": "El jardin olvidado",
-                    "autores": [{"nombre": "Maria Lopez"}],
+                    "titulo": "El jardín olvidado",
+                    "autores": [{"nombre": "María López"}],
                     "editorial": "Ediciones Independientes",
                 },
                 "ediciones": [
@@ -77,24 +77,24 @@ class LibroConEdiciones(BaseModel):
 
 class ResultadoBusqueda(BaseModel):
     """
-    Encapsula los resultados completos de una operacion de scraping.
+    Encapsula los resultados completos de una operación de scraping.
 
     Atributos:
         libros: Lista de libros con sus ediciones.
-        total_encontrados: Numero total de resultados encontrados.
-        pagina_actual: Pagina actual de resultados.
-        total_paginas: Numero total de paginas disponibles.
-        termino_busqueda: Termino de busqueda utilizado.
+        total_encontrados: Número total de resultados encontrados.
+        pagina_actual: Página actual de resultados.
+        total_paginas: Número total de páginas disponibles.
+        termino_busqueda: Término de búsqueda utilizado.
         fuentes_consultadas: Lista de fuentes que se consultaron.
-        tiempo_ejecucion_segundos: Tiempo total de la operacion en segundos.
-        errores: Lista de errores ocurridos durante la busqueda (opcional).
+        tiempo_ejecucion_segundos: Tiempo total de la operación en segundos.
+        errores: Lista de errores ocurridos durante la búsqueda (opcional).
     """
 
     libros: List[LibroConEdiciones] = Field(default_factory=list)
     total_encontrados: int = Field(
         default=0,
         ge=0,
-        description="Numero total de resultados encontrados",
+        description="Número total de resultados encontrados",
     )
     pagina_actual: int = Field(default=1, ge=1)
     total_paginas: int = Field(default=1, ge=1)
@@ -103,11 +103,11 @@ class ResultadoBusqueda(BaseModel):
     tiempo_ejecucion_segundos: float = Field(
         default=0.0,
         ge=0.0,
-        description="Tiempo total de ejecucion en segundos",
+        description="Tiempo total de ejecución en segundos",
     )
     errores: List[str] = Field(
         default_factory=list,
-        description="Errores ocurridos durante la busqueda",
+        description="Errores ocurridos durante la búsqueda",
     )
     fecha_consulta: datetime = Field(
         default_factory=datetime.now,
@@ -115,7 +115,7 @@ class ResultadoBusqueda(BaseModel):
     )
 
     class Config:
-        """Configuracion del modelo."""
+        """Configuración del modelo."""
 
         json_schema_extra = {
             "example": {

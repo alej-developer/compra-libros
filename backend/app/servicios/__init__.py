@@ -1,1 +1,1 @@
-# Paquete de servicios (logica de negocio y scraping)
+# Paquete de servicios (lógica de negocio y scraping)

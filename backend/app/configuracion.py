@@ -1,8 +1,8 @@
 """
-Configuracion central de la aplicacion.
+Configuración central de la aplicación.
 
 Carga las variables de entorno desde un archivo .env y define
-los parametros de configuracion globales del servidor.
+los parámetros de configuración globales del servidor.
 """
 
 from pydantic_settings import BaseSettings
@@ -11,18 +11,18 @@ from typing import List
 
 class Configuracion(BaseSettings):
     """
-    Clase de configuracion que centraliza todos los parametros del proyecto.
+    Clase de configuración que centraliza todos los parámetros del proyecto.
 
-    Los valores se cargan automaticamente desde variables de entorno
-    o desde un archivo .env en la raiz del backend.
+    Los valores se cargan automáticamente desde variables de entorno
+    o desde un archivo .env en la raíz del backend.
     """
 
     # -- Servidor --
     nombre_app: str = "API de Scraping de Libros"
     version_app: str = "0.1.0"
     descripcion_app: str = (
-        "API para buscar, comparar y obtener informacion de libros "
-        "desde multiples tiendas en linea mediante web scraping."
+        "API para buscar, comparar y obtener información de libros "
+        "desde múltiples tiendas en línea mediante web scraping."
     )
     modo_debug: bool = False
     host: str = "0.0.0.0"

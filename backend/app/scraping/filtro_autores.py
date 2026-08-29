@@ -1,10 +1,10 @@
 """
 Algoritmo de filtrado para detectar autores poco conocidos o independientes.
 
-Implementa un sistema de puntuacion que cruza multiples indicadores para
+Implementa un sistema de puntuación que cruza múltiples indicadores para
 determinar si un autor es independiente o poco conocido:
-- Numero de resenas (menos resenas = mayor probabilidad de ser independiente).
-- Popularidad del sello editorial (editoriales pequenas = autor independiente).
+- Número de reseñas (menos reseñas = mayor probabilidad de ser independiente).
+- Popularidad del sello editorial (editoriales pequeñas = autor independiente).
 - Presencia en listas de bestsellers (ausencia = posible autor independiente).
 """
 
@@ -20,9 +20,9 @@ logger = logging.getLogger("scraping.filtro_autores")
 
 # -- Editoriales conocidas como grandes sellos --
 # Los libros de estas editoriales se consideran de autores establecidos.
-# Esta lista se puede ampliar segun las necesidades del proyecto.
+# Esta lista se puede ampliar según las necesidades del proyecto.
 _EDITORIALES_GRANDES = {
-    # Espanol
+    # Español
     "planeta", "alfaguara", "penguin random house", "anagrama", "tusquets",
     "seix barral", "destino", "espasa", "debolsillo", "plaza & janes",
     "grijalbo", "lumen", "salamandra", "rba", "ediciones b",
@@ -40,16 +40,16 @@ class FiltroAutoresIndependientes:
     """
     Algoritmo de filtrado que prioriza autores poco conocidos o independientes.
 
-    El sistema asigna una puntuacion de independencia (0-100) a cada libro
-    basandose en multiples indicadores. Una puntuacion mas alta indica mayor
+    El sistema asigna una puntuación de independencia (0-100) a cada libro
+    basándose en múltiples indicadores. Una puntuación más alta indica mayor
     probabilidad de que el autor sea independiente o poco conocido.
 
     Indicadores y pesos:
-        - Numero de resenas (40%): Menos resenas = mayor puntuacion.
-        - Editorial (35%): Editorial independiente = mayor puntuacion.
-        - Calificacion (15%): Calificaciones atipicas (muy altas con pocas
-          resenas) sugieren nicho independiente.
-        - Formato (10%): Autopublicacion digital tiene mayor puntuacion.
+        - Número de reseñas (40%): Menos reseñas = mayor puntuación.
+        - Editorial (35%): Editorial independiente = mayor puntuación.
+        - Calificación (15%): Calificaciones atípicas (muy altas con pocas
+          reseñas) sugieren nicho independiente.
+        - Formato (10%): Autopublicación digital tiene mayor puntuación.
 
     No se almacenan datos personales de los autores ni de los usuarios.
     """
@@ -67,16 +67,16 @@ class FiltroAutoresIndependientes:
         """
         Inicializa el filtro de autores independientes.
 
-        Parametros:
-            umbral_resenas_bajo: Resenas por debajo de este numero se
+        Parámetros:
+            umbral_resenas_bajo: Reseñas por debajo de este número se
                 consideran pocas (indica autor poco conocido).
-            umbral_resenas_medio: Resenas por debajo de este numero se
+            umbral_resenas_medio: Reseñas por debajo de este número se
                 consideran moderadas.
             editoriales_grandes: Conjunto de nombres de editoriales grandes.
                 Si no se proporciona, se usa la lista predefinida.
-            peso_resenas: Peso del indicador de resenas (0.0 a 1.0).
+            peso_resenas: Peso del indicador de reseñas (0.0 a 1.0).
             peso_editorial: Peso del indicador de editorial (0.0 a 1.0).
-            peso_calificacion: Peso del indicador de calificacion (0.0 a 1.0).
+            peso_calificacion: Peso del indicador de calificación (0.0 a 1.0).
             peso_formato: Peso del indicador de formato (0.0 a 1.0).
         """
         self._umbral_resenas_bajo = umbral_resenas_bajo
@@ -93,20 +93,20 @@ class FiltroAutoresIndependientes:
         puntuacion_minima: float = 50.0,
     ) -> List[LibroConEdiciones]:
         """
-        Filtra y puntua libros priorizando autores independientes.
+        Filtra y puntúa libros priorizando autores independientes.
 
-        Asigna una puntuacion de independencia a cada libro y retorna
-        solo aquellos que superan la puntuacion minima, ordenados de
-        mayor a menor puntuacion.
+        Asigna una puntuación de independencia a cada libro y retorna
+        solo aquellos que superan la puntuación mínima, ordenados de
+        mayor a menor puntuación.
 
-        Parametros:
+        Parámetros:
             libros: Lista de libros con ediciones a evaluar.
-            puntuacion_minima: Puntuacion minima para incluir un libro
+            puntuacion_minima: Puntuación mínima para incluir un libro
                 en los resultados (0.0 a 100.0).
 
         Retorna:
-            Lista de libros que superan la puntuacion minima, ordenados
-            por puntuacion de independencia descendente.
+            Lista de libros que superan la puntuación mínima, ordenados
+            por puntuación de independencia descendente.
         """
         libros_puntuados = []
 
@@ -133,16 +133,16 @@ class FiltroAutoresIndependientes:
 
     def calcular_puntuacion(self, libro_ediciones: LibroConEdiciones) -> float:
         """
-        Calcula la puntuacion de independencia de un libro.
+        Calcula la puntuación de independencia de un libro.
 
-        Combina los indicadores de resenas, editorial, calificacion y formato
-        con sus respectivos pesos para obtener una puntuacion final.
+        Combina los indicadores de reseñas, editorial, calificación y formato
+        con sus respectivos pesos para obtener una puntuación final.
 
-        Parametros:
+        Parámetros:
             libro_ediciones: Libro con sus ediciones a evaluar.
 
         Retorna:
-            Puntuacion de independencia (0.0 a 100.0).
+            Puntuación de independencia (0.0 a 100.0).
         """
         puntuacion_resenas = self._puntuar_por_resenas(libro_ediciones.numero_resenas)
         puntuacion_editorial = self._puntuar_por_editorial(libro_ediciones.libro.editorial)
@@ -163,8 +163,8 @@ class FiltroAutoresIndependientes:
         puntuacion_final = min(100.0, max(0.0, puntuacion_total))
 
         logger.debug(
-            "Puntuacion para '%s': resenas=%.1f, editorial=%.1f, "
-            "calificacion=%.1f, formato=%.1f -> total=%.1f",
+            "Puntuación para '%s': reseñas=%.1f, editorial=%.1f, "
+            "calificación=%.1f, formato=%.1f -> total=%.1f",
             libro_ediciones.libro.titulo,
             puntuacion_resenas,
             puntuacion_editorial,
@@ -177,16 +177,16 @@ class FiltroAutoresIndependientes:
 
     def _puntuar_por_resenas(self, numero_resenas: Optional[int]) -> float:
         """
-        Calcula la puntuacion basada en el numero de resenas.
+        Calcula la puntuación basada en el número de reseñas.
 
-        Menos resenas = mayor puntuacion (indica autor menos conocido).
-        Sin dato de resenas se asigna una puntuacion neutra.
+        Menos reseñas = mayor puntuación (indica autor menos conocido).
+        Sin dato de reseñas se asigna una puntuación neutra.
 
-        Parametros:
-            numero_resenas: Cantidad de resenas del libro.
+        Parámetros:
+            numero_resenas: Cantidad de reseñas del libro.
 
         Retorna:
-            Puntuacion de 0.0 a 100.0.
+            Puntuación de 0.0 a 100.0.
         """
         if numero_resenas is None:
             # Sin datos, asignar puntuacion neutra-alta (probablemente poco conocido)
@@ -203,23 +203,23 @@ class FiltroAutoresIndependientes:
             rango = self._umbral_resenas_medio - self._umbral_resenas_bajo
             return 70.0 - (numero_resenas - self._umbral_resenas_bajo) / rango * 40.0
         else:
-            # Mas de 500 resenas: autor probablemente conocido
-            # Decae rapidamente hacia 0
+            # Más de 500 reseñas: autor probablemente conocido
+            # Decae rápidamente hacia 0
             exceso = numero_resenas - self._umbral_resenas_medio
             return max(0.0, 30.0 - exceso / 100.0 * 10.0)
 
     def _puntuar_por_editorial(self, editorial: Optional[str]) -> float:
         """
-        Calcula la puntuacion basada en la editorial.
+        Calcula la puntuación basada en la editorial.
 
-        Editoriales independientes o desconocidas reciben mayor puntuacion.
-        Grandes sellos editoriales reciben puntuacion baja.
+        Editoriales independientes o desconocidas reciben mayor puntuación.
+        Grandes sellos editoriales reciben puntuación baja.
 
-        Parametros:
+        Parámetros:
             editorial: Nombre de la editorial.
 
         Retorna:
-            Puntuacion de 0.0 a 100.0.
+            Puntuación de 0.0 a 100.0.
         """
         if not editorial:
             # Sin editorial: probablemente autopublicado
@@ -232,7 +232,7 @@ class FiltroAutoresIndependientes:
             if sello in editorial_lower or editorial_lower in sello:
                 return 10.0
 
-        # Indicadores de autopublicacion
+        # Indicadores de autopublicación
         indicadores_indie = [
             "independently published",
             "autopublicado",
@@ -258,22 +258,22 @@ class FiltroAutoresIndependientes:
         numero_resenas: Optional[int],
     ) -> float:
         """
-        Calcula la puntuacion basada en la calificacion y su relacion con las resenas.
+        Calcula la puntuación basada en la calificación y su relación con las reseñas.
 
-        Libros con calificaciones altas pero pocas resenas sugieren un nicho
-        independiente (publico reducido pero fiel).
+        Libros con calificaciones altas pero pocas reseñas sugieren un nicho
+        independiente (público reducido pero fiel).
 
-        Parametros:
-            calificacion: Puntuacion del libro (0.0 a 5.0).
-            numero_resenas: Cantidad de resenas.
+        Parámetros:
+            calificacion: Puntuación del libro (0.0 a 5.0).
+            numero_resenas: Cantidad de reseñas.
 
         Retorna:
-            Puntuacion de 0.0 a 100.0.
+            Puntuación de 0.0 a 100.0.
         """
         if calificacion is None:
-            return 50.0  # Sin datos, puntuacion neutra
+            return 50.0  # Sin datos, puntuación neutra
 
-        # Calificacion alta con pocas resenas = nicho independiente
+        # Calificación alta con pocas reseñas = nicho independiente
         if numero_resenas is not None and numero_resenas <= self._umbral_resenas_bajo:
             if calificacion >= 4.0:
                 return 90.0
@@ -282,7 +282,7 @@ class FiltroAutoresIndependientes:
             else:
                 return 50.0
 
-        # Calificacion alta con muchas resenas = autor conocido
+        # Calificación alta con muchas reseñas = autor conocido
         if numero_resenas is not None and numero_resenas > self._umbral_resenas_medio:
             return 20.0
 
@@ -290,17 +290,17 @@ class FiltroAutoresIndependientes:
 
     def _puntuar_por_formato(self, ediciones: list) -> float:
         """
-        Calcula la puntuacion basada en los formatos disponibles.
+        Calcula la puntuación basada en los formatos disponibles.
 
         Los autores independientes tienden a publicar principalmente
         en formato digital (ebook). Si solo hay ediciones digitales,
-        la puntuacion es mayor.
+        la puntuación es mayor.
 
-        Parametros:
+        Parámetros:
             ediciones: Lista de ediciones del libro.
 
         Retorna:
-            Puntuacion de 0.0 a 100.0.
+            Puntuación de 0.0 a 100.0.
         """
         if not ediciones:
             return 50.0  # Sin datos de ediciones
@@ -314,7 +314,7 @@ class FiltroAutoresIndependientes:
         if formatos.issubset(formatos_digitales):
             return 85.0
 
-        # Multiples formatos incluyendo tapa dura = editorial grande
+        # Múltiples formatos incluyendo tapa dura = editorial grande
         if FormatoLibro.TAPA_DURA in formatos and FormatoLibro.TAPA_BLANDA in formatos:
             return 25.0
 
@@ -330,13 +330,13 @@ class FiltroAutoresIndependientes:
         libros: List[LibroConEdiciones],
     ) -> dict:
         """
-        Genera estadisticas del filtrado de autores independientes.
+        Genera estadísticas del filtrado de autores independientes.
 
-        Parametros:
+        Parámetros:
             libros: Lista de libros ya puntuados.
 
         Retorna:
-            Diccionario con estadisticas del filtrado.
+            Diccionario con estadísticas del filtrado.
         """
         if not libros:
             return {

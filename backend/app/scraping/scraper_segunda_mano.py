@@ -1,12 +1,12 @@
 """
-Scraper para librerias y plataformas de libros de segunda mano.
+Scraper para librerías y plataformas de libros de segunda mano.
 
-Implementa la logica de scraping especifica para sitios web dedicados
+Implementa la lógica de scraping específica para sitios web dedicados
 a la venta de libros usados, de segunda mano y entre particulares.
-Extrae: titulo, autor, precio, estado fisico, url de compra real,
+Extrae: título, autor, precio, estado físico, url de compra real,
 editorial y formato.
 
-Todos los libros extraidos por este scraper se marcan automaticamente
+Todos los libros extraídos por este scraper se marcan automáticamente
 con estado "De segunda mano".
 """
 

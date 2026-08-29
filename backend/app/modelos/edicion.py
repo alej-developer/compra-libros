@@ -1,7 +1,7 @@
 """
-Modelo de datos: Edicion
+Modelo de datos: Edición
 
-Representa una edicion especifica de un libro, incluyendo formato, precio
+Representa una edición específica de un libro, incluyendo formato, precio
 y disponibilidad en una tienda o plataforma concreta.
 """
 
@@ -12,7 +12,7 @@ from enum import Enum
 
 
 class FormatoLibro(str, Enum):
-    """Formatos disponibles para una edicion de libro."""
+    """Formatos disponibles para una edición de libro."""
 
     TAPA_DURA = "tapa_dura"
     TAPA_BLANDA = "tapa_blanda"
@@ -23,7 +23,7 @@ class FormatoLibro(str, Enum):
 
 
 class EstadoDisponibilidad(str, Enum):
-    """Estados posibles de disponibilidad de una edicion."""
+    """Estados posibles de disponibilidad de una edición."""
 
     DISPONIBLE = "disponible"
     AGOTADO = "agotado"
@@ -34,44 +34,44 @@ class EstadoDisponibilidad(str, Enum):
 
 class Edicion(BaseModel):
     """
-    Clase que representa una edicion especifica de un libro.
+    Clase que representa una edición específica de un libro.
 
-    Una edicion captura la informacion de una version particular del libro
+    Una edición captura la información de una versión particular del libro
     en una tienda o plataforma, permitiendo comparar precios y formatos.
 
     Atributos:
-        isbn: Codigo ISBN de esta edicion (opcional).
-        formato: Formato fisico o digital de la edicion.
+        isbn: Código ISBN de esta edición (opcional).
+        formato: Formato físico o digital de la edición.
         precio: Precio de venta en la moneda especificada.
-        moneda: Codigo ISO de la moneda del precio.
-        tienda: Nombre de la tienda o plataforma donde se encontro.
-        url_compra: Enlace directo para comprar esta edicion.
+        moneda: Código ISO de la moneda del precio.
+        tienda: Nombre de la tienda o plataforma donde se encontró.
+        url_compra: Enlace directo para comprar esta edición.
         disponibilidad: Estado actual de disponibilidad.
-        fecha_publicacion: Fecha de publicacion de esta edicion (opcional).
-        numero_paginas: Cantidad de paginas de esta edicion (opcional).
-        idioma: Idioma de esta edicion especifica (opcional).
-        fecha_scraping: Fecha en que se extrajo esta informacion.
+        fecha_publicacion: Fecha de publicación de esta edición (opcional).
+        numero_paginas: Cantidad de páginas de esta edición (opcional).
+        idioma: Idioma de esta edición específica (opcional).
+        fecha_scraping: Fecha en que se extrajo esta información.
     """
 
     isbn: Optional[str] = Field(
         default=None,
         pattern=r"^(?:\d{10}|\d{13})$",
-        description="Codigo ISBN-10 o ISBN-13 de la edicion (solo digitos)",
+        description="Código ISBN-10 o ISBN-13 de la edición (solo dígitos)",
     )
     formato: FormatoLibro = Field(
         default=FormatoLibro.OTRO,
-        description="Formato de la edicion",
+        description="Formato de la edición",
     )
     precio: Optional[float] = Field(
         default=None,
         ge=0.0,
-        description="Precio de venta de la edicion",
+        description="Precio de venta de la edición",
         examples=[19.99],
     )
     moneda: str = Field(
         default="EUR",
         max_length=3,
-        description="Codigo ISO 4217 de la moneda",
+        description="Código ISO 4217 de la moneda",
         examples=["EUR", "USD", "MXN"],
     )
     tienda: str = Field(
@@ -83,7 +83,7 @@ class Edicion(BaseModel):
     )
     url_compra: Optional[str] = Field(
         default=None,
-        description="Enlace directo para comprar la edicion",
+        description="Enlace directo para comprar la edición",
     )
     disponibilidad: EstadoDisponibilidad = Field(
         default=EstadoDisponibilidad.DESCONOCIDO,
@@ -91,26 +91,26 @@ class Edicion(BaseModel):
     )
     fecha_publicacion: Optional[date] = Field(
         default=None,
-        description="Fecha de publicacion de la edicion",
+        description="Fecha de publicación de la edición",
     )
     numero_paginas: Optional[int] = Field(
         default=None,
         gt=0,
-        description="Cantidad de paginas de la edicion",
+        description="Cantidad de páginas de la edición",
     )
     idioma: Optional[str] = Field(
         default=None,
         max_length=50,
-        description="Idioma de la edicion",
-        examples=["Espanol"],
+        description="Idioma de la edición",
+        examples=["Español"],
     )
     fecha_scraping: Optional[date] = Field(
         default=None,
-        description="Fecha en que se extrajo la informacion",
+        description="Fecha en que se extrajo la información",
     )
 
     class Config:
-        """Configuracion del modelo Edicion."""
+        """Configuración del modelo Edicion."""
 
         json_schema_extra = {
             "example": {

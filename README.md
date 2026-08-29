@@ -1,47 +1,47 @@
-# Sistema de Web Scraping y Comparacion de Libros
+# Sistema de Web Scraping y Comparación de Libros
 
-Plataforma integral para la busqueda, comparacion de precios y descubrimiento de literatura tanto en librerias tradicionales como en plataformas digitales y mercados de segunda mano. El sistema es completamente funcional, incluye enlaces directos y seguros para la adquisicion de ejemplares, prioriza el hallazgo de ofertas y visibiliza autores emergentes e independientes mediante algoritmos de evaluacion de sellos editoriales y recepcion critica.
+Plataforma integral para la búsqueda, comparación de precios y descubrimiento de literatura tanto en librerías tradicionales como en plataformas digitales y mercados de segunda mano. El sistema es completamente funcional, incluye enlaces directos y seguros para la adquisición de ejemplares, prioriza el hallazgo de ofertas y visibiliza autores emergentes e independientes mediante algoritmos de evaluación de sellos editoriales y recepción crítica.
 
 ---
 
 ## Tabla de Contenidos
 
-1. [Descripcion del Proyecto](#descripcion-del-proyecto)
+1. [Descripción del Proyecto](#descripción-del-proyecto)
 2. [Arquitectura del Sistema](#arquitectura-del-sistema)
 3. [Estructura del Repositorio](#estructura-del-repositorio)
 4. [Requisitos Previos](#requisitos-previos)
-5. [Instalacion y Configuracion](#instalacion-y-configuracion)
-6. [Guia de Ejecucion](#guia-de-ejecucion)
+5. [Instalación y Configuración](#instalación-y-configuración)
+6. [Guía de Ejecución](#guía-de-ejecución)
 7. [Endpoints de la API](#endpoints-de-la-api)
-8. [Enfoque de Privacidad y Scraping Etico](#enfoque-de-privacidad-y-scraping-etico)
+8. [Enfoque de Privacidad y Scraping Ético](#enfoque-de-privacidad-y-scraping-ético)
 9. [Licencia y Consideraciones Legales](#licencia-y-consideraciones-legales)
 
 ---
 
-## Descripcion del Proyecto
+## Descripción del Proyecto
 
-Este proyecto centraliza la busqueda de obras literarias a traves de multiples canales comerciales y de coleccionismo, ofreciendo una experiencia visual sobria y eficiente. Entre sus capacidades destacan:
+Este proyecto centraliza la búsqueda de obras literarias a través de múltiples canales comerciales y de coleccionismo, ofreciendo una experiencia visual sobria y eficiente. Entre sus capacidades destacan:
 
-- **Extraccion multicanal integral**: Recoleccion estructurada de datos desde librerias tradicionales (Casa del Libro, Fnac), plataformas digitales (Amazon Kindle, Google Books) y portales especializados en libros descatalogados, antiguos y de ocasion (Iberlibro, Todocoleccion, Uniliber).
-- **Soporte de libros nuevos y de segunda mano**: Identificacion explicita de la condicion fisica del ejemplar mediante el atributo de estado ("Nuevo" o "De segunda mano"), permitiendo descubrir opciones economicas y ejemplares de coleccionista.
-- **Enlaces directos y seguros ("Ver ejemplar")**: Cada resultado incluye la URL absoluta y verificada hacia la tienda o vendedor correspondiente, abriendose en pestana independiente mediante `target="_blank"` y atributos de proteccion `rel="noopener noreferrer"`, sin intermediarios ni rastreo de clics.
-- **Deteccion de ofertas y oportunidades**: Localizacion sistematica de ejemplares con descuentos significativos, ofertas especiales o distribucion sin costo.
-- **Algoritmo de visibilidad para autores emergentes**: Ponderacion analitica de volumen de resenas, clasificacion de sellos editoriales independientes y patrones de autopublicacion para destacar creadores poco difundidos.
-- **Interfaz de usuario minimalista**: Diseno funcional inspirado en la tranquilidad de un estudio de lectura hogareno (tonos madera, pergamino y grises calidos), optimizado para consulta rapida y comparacion limpia sin elementos invasivos.
+- **Extracción multicanal integral**: Recolección estructurada de datos desde librerías tradicionales (Casa del Libro, Fnac), plataformas digitales (Amazon Kindle, Google Books) y portales especializados en libros descatalogados, antiguos y de ocasión (Iberlibro, Todocoleccion, Uniliber).
+- **Soporte de libros nuevos y de segunda mano**: Identificación explícita de la condición física del ejemplar mediante el atributo de estado ("Nuevo" o "De segunda mano"), permitiendo descubrir opciones económicas y ejemplares de coleccionista.
+- **Enlaces directos y seguros ("Ver ejemplar")**: Cada resultado incluye la URL absoluta y verificada hacia la tienda o vendedor correspondiente, abriéndose en pestaña independiente mediante `target="_blank"` y atributos de protección `rel="noopener noreferrer"`, sin intermediarios ni rastreo de clics.
+- **Detección de ofertas y oportunidades**: Localización sistemática de ejemplares con descuentos significativos, ofertas especiales o distribución sin costo.
+- **Algoritmo de visibilidad para autores emergentes**: Ponderación analítica de volumen de reseñas, clasificación de sellos editoriales independientes y patrones de autopublicación para destacar creadores poco difundidos.
+- **Interfaz de usuario minimalista**: Diseño funcional inspirado en la tranquilidad de un estudio de lectura hogareño (tonos madera, pergamino y grises cálidos), optimizado para consulta rápida y comparación limpia sin elementos invasivos.
 
 ---
 
 ## Arquitectura del Sistema
 
-La aplicacion sigue los principios de la Programacion Orientada a Objetos (POO), desacoplando la logica de negocio, los mecanismos de extraccion web y la capa de presentacion.
+La aplicación sigue los principios de la Programación Orientada a Objetos (POO), desacoplando la lógica de negocio, los mecanismos de extracción web y la capa de presentación.
 
 ### Componentes Principales
 
 ```
 +-----------------------------------------------------------------------+
 |                              FRONTEND                                 |
-|          HTML5 Semantico + CSS3 Personalizado + JavaScript            |
-|       (Consumo Asincrono REST / Diseno Responsivo / Sin Rastreo)      |
+|          HTML5 Semántico + CSS3 Personalizado + JavaScript            |
+|       (Consumo Asíncrono REST / Diseño Responsivo / Sin Rastreo)      |
 +-----------------------------------------------------------------------+
                                    |
                              Peticiones HTTP
@@ -49,13 +49,13 @@ La aplicacion sigue los principios de la Programacion Orientada a Objetos (POO),
                                    v
 +-----------------------------------------------------------------------+
 |                           API REST (FastAPI)                          |
-|                     Middleware CORS + Validacion                      |
+|                     Middleware CORS + Validación                      |
 +-----------------------------------------------------------------------+
                                    |
                                    v
 +-----------------------------------------------------------------------+
-|                    SERVICIO DE ORQUESTACION (POO)                     |
-|           Coordina busquedas concurrentes y unifica resultados        |
+|                    SERVICIO DE ORQUESTACIÓN (POO)                     |
+|           Coordina búsquedas concurrentes y unifica resultados        |
 +-----------------------------------------------------------------------+
             |                          |                         |
             v                          v                         v
@@ -68,26 +68,26 @@ La aplicacion sigue los principios de la Programacion Orientada a Objetos (POO),
                                        |
                                        v
 +-----------------------------------------------------------------------+
-|                   UTILIDADES DE SCRAPING ETICO                        |
-|   - Rotacion de User-Agents       - Tiempos de espera aleatorios      |
-|   - Cabecera Do Not Track (DNT)   - Gestion de limites de tasa (429)  |
-|   - Resolucion de URLs absolutas  - Descarte silencioso sin enlace    |
+|                   UTILIDADES DE SCRAPING ÉTICO                        |
+|   - Rotación de User-Agents       - Tiempos de espera aleatorios      |
+|   - Cabecera Do Not Track (DNT)   - Gestión de límites de tasa (429)  |
+|   - Resolución de URLs absolutas  - Descarte silencioso sin enlace    |
 +-----------------------------------------------------------------------+
                                        |
                                        v
 +-----------------------------------------------------------------------+
 |                FILTRO DE AUTORES INDEPENDIENTES                       |
-|   Calculo ponderado de puntuacion de independencia (0 a 100)          |
+|   Cálculo ponderado de puntuación de independencia (0 a 100)          |
 +-----------------------------------------------------------------------+
 ```
 
 ### Modelos de Datos (Pydantic)
 
-- **Autor**: Entidad que almacena nombre, nacionalidad, semblanza biografica y enlace de referencia.
-- **Libro**: Modelo central que integra titulo, coleccion de autores, identificadores normalizados (ISBN-10 / ISBN-13), editorial, categorias tematicas, idioma, calificacion media, enlace de origen (`url_fuente`), enlace obligatorio y validado de compra (`url_compra`) y estado fisico (`estado`: "Nuevo" o "De segunda mano").
-- **Edicion**: Registro de variantes comerciales (tapa dura, tapa blanda, libro de bolsillo, edicion Kindle, audiolibro), precio unitario, divisa, disponibilidad en inventario y enlace de adquisicion.
-- **FiltroScraping**: Parametrizacion exhaustiva de busqueda (terminos clave, rangos de precio, idioma, sellos especificos, ordenacion y paginacion).
-- **ResultadoBusqueda**: Contenedor consolidado con metricas de tiempo de respuesta, fuentes consultadas, evaluacion de independencia autoral y registros de ejecucion.
+- **Autor**: Entidad que almacena nombre, nacionalidad, semblanza biográfica y enlace de referencia.
+- **Libro**: Modelo central que integra título, colección de autores, identificadores normalizados (ISBN-10 / ISBN-13), editorial, categorías temáticas, idioma, calificación media, enlace de origen (`url_fuente`), enlace obligatorio y validado de compra (`url_compra`) y estado físico (`estado`: "Nuevo" o "De segunda mano").
+- **Edición**: Registro de variantes comerciales (tapa dura, tapa blanda, libro de bolsillo, edición Kindle, audiolibro), precio unitario, divisa, disponibilidad en inventario y enlace de adquisición.
+- **FiltroScraping**: Parametrización exhaustiva de búsqueda (términos clave, rangos de precio, idioma, sellos específicos, ordenación y paginación).
+- **ResultadoBusqueda**: Contenedor consolidado con métricas de tiempo de respuesta, fuentes consultadas, evaluación de independencia autoral y registros de ejecución.
 
 ---
 
@@ -95,15 +95,15 @@ La aplicacion sigue los principios de la Programacion Orientada a Objetos (POO),
 
 ```
 .
-|-- .gitignore                  # Exclusion estricta de credenciales, entornos y temporales
-|-- README.md                   # Documentacion tecnica principal
+|-- .gitignore                  # Exclusión estricta de credenciales, entornos y temporales
+|-- README.md                   # Documentación técnica principal
 |-- backend/
 |   |-- .env.ejemplo            # Plantilla para variables de entorno locales
-|   |-- pyproject.toml          # Definicion de dependencias y herramientas de desarrollo
+|   |-- pyproject.toml          # Definición de dependencias y herramientas de desarrollo
 |   `-- app/
 |       |-- __init__.py
-|       |-- configuracion.py    # Gestion centralizada con Pydantic Settings
-|       |-- principal.py        # Punto de entrada de FastAPI y configuracion de middlewares
+|       |-- configuracion.py    # Gestión centralizada con Pydantic Settings
+|       |-- principal.py        # Punto de entrada de FastAPI y configuración de middlewares
 |       |-- modelos/            # Clases y esquemas de datos estructurados
 |       |   |-- __init__.py
 |       |   |-- autor.py
@@ -111,26 +111,26 @@ La aplicacion sigue los principios de la Programacion Orientada a Objetos (POO),
 |       |   |-- filtro_scraping.py
 |       |   |-- libro.py        # Modelo Libro con url_compra y estado
 |       |   `-- resultado_busqueda.py
-|       |-- rutas/              # Controladores y definicion de endpoints REST
+|       |-- rutas/              # Controladores y definición de endpoints REST
 |       |   |-- __init__.py
 |       |   `-- rutas_scraping.py
-|       |-- scraping/           # Motor de extraccion y algoritmos analiticos
+|       |-- scraping/           # Motor de extracción y algoritmos analíticos
 |       |   |-- __init__.py
 |       |   |-- base.py         # Clase abstracta ScraperBase con soporte de URLs absolutas
 |       |   |-- filtro_autores.py # Evaluador ponderado de autores independientes
-|       |   |-- scraper_libreria_fisica.py   # Scraper de librerias tradicionales
+|       |   |-- scraper_libreria_fisica.py   # Scraper de librerías tradicionales
 |       |   |-- scraper_plataforma_digital.py # Scraper de plataformas digitales
 |       |   |-- scraper_segunda_mano.py      # Scraper especializado de segunda mano
 |       |   `-- utilidades.py   # Rotador de agentes de usuario y cliente HTTP seguro
-|       `-- servicios/          # Capa de orquestacion y logica del negocio
+|       `-- servicios/          # Capa de orquestación y lógica del negocio
 |           |-- __init__.py
 |           `-- servicio_scraping.py
 `-- frontend/
     |-- index.html              # Interfaz de usuario estructurada
     |-- css/
-    |   `-- estilos.css         # Diseno editorial con paleta neutra y distintivos de estado
+    |   `-- estilos.css         # Diseño editorial con paleta neutra y distintivos de estado
     `-- js/
-        |-- api.js              # Capa de comunicacion asincrona con la API
+        |-- api.js              # Capa de comunicación asíncrona con la API
         `-- app.js              # Controlador del DOM, renderizado de tarjetas y enlaces
 ```
 
@@ -138,13 +138,13 @@ La aplicacion sigue los principios de la Programacion Orientada a Objetos (POO),
 
 ## Requisitos Previos
 
-- **Python**: Version 3.11 o superior.
+- **Python**: Versión 3.11 o superior.
 - **Navegador web moderno**: Google Chrome, Mozilla Firefox, Microsoft Edge o Safari con soporte para JavaScript ES6+.
-- **Git**: Para el control de versiones y clonacion del repositorio.
+- **Git**: Para el control de versiones y clonación del repositorio.
 
 ---
 
-## Instalacion y Configuracion
+## Instalación y Configuración
 
 ### 1. Clonar el Repositorio
 
@@ -162,7 +162,7 @@ cd backend
 python -m venv venv
 ```
 
-Active el entorno virtual segun su sistema operativo:
+Active el entorno virtual según su sistema operativo:
 
 - **Windows (PowerShell)**:
   ```powershell
@@ -185,7 +185,7 @@ Con el entorno virtual activo, ejecute:
 pip install -e .
 ```
 
-O instale directamente las librerias requeridas:
+O instale directamente las librerías requeridas:
 
 ```bash
 pip install fastapi uvicorn[standard] pydantic pydantic-settings httpx beautifulsoup4 lxml
@@ -193,7 +193,7 @@ pip install fastapi uvicorn[standard] pydantic pydantic-settings httpx beautiful
 
 ### 4. Variables de Entorno (Opcional)
 
-Si desea personalizar puertos, origenes de CORS o tiempos de espera, copie el archivo de ejemplo:
+Si desea personalizar puertos, orígenes de CORS o tiempos de espera, copie el archivo de ejemplo:
 
 ```bash
 cp .env.ejemplo .env
@@ -201,9 +201,9 @@ cp .env.ejemplo .env
 
 ---
 
-## Guia de Ejecucion
+## Guía de Ejecución
 
-### Ejecucion del Servidor Backend
+### Ejecución del Servidor Backend
 
 Desde el directorio `backend` y con el entorno virtual activo:
 
@@ -211,16 +211,16 @@ Desde el directorio `backend` y con el entorno virtual activo:
 uvicorn app.principal:app --reload --host 127.0.0.1 --port 8000
 ```
 
-El servidor quedara disponible en `http://127.0.0.1:8000`.
+El servidor quedará disponible en `http://127.0.0.1:8000`.
 
-- **Documentacion interactiva Swagger UI**: `http://127.0.0.1:8000/docs`
-- **Documentacion interactiva ReDoc**: `http://127.0.0.1:8000/redoc`
+- **Documentación interactiva Swagger UI**: `http://127.0.0.1:8000/docs`
+- **Documentación interactiva ReDoc**: `http://127.0.0.1:8000/redoc`
 
-### Ejecucion del Cliente Frontend
+### Ejecución del Cliente Frontend
 
-El frontend esta compuesto por archivos estaticos que no requieren compiladores adicionales. Puede abrirse directamente o servirse mediante un servidor web local:
+El frontend está compuesto por archivos estáticos que no requieren compiladores adicionales. Puede abrirse directamente o servirse mediante un servidor web local:
 
-**Opcion A: Servidor HTTP simple con Python (Recomendada)**
+**Opción A: Servidor HTTP simple con Python (Recomendada)**
 
 Abra una nueva terminal, navegue a la carpeta del frontend y ejecute:
 
@@ -231,7 +231,7 @@ python -m http.server 3000
 
 Abra su navegador en: `http://localhost:3000`
 
-**Opcion B: Apertura directa**
+**Opción B: Apertura directa**
 
 Abra el archivo `frontend/index.html` en su navegador web preferido.
 
@@ -239,36 +239,36 @@ Abra el archivo `frontend/index.html` en su navegador web preferido.
 
 ## Endpoints de la API
 
-| Metodo | Ruta | Descripcion | Parametros / Cuerpo |
+| Método | Ruta | Descripción | Parámetros / Cuerpo |
 |---|---|---|---|
-| `GET` | `/` | Comprobacion de bienvenida y estado del servicio | Ninguno |
-| `GET` | `/salud` | Verificacion de estado operativo (health check) | Ninguno |
-| `GET` | `/api/scraping/fuentes` | Catalogo de fuentes registradas (librerias fisicas, digitales y segunda mano) | Ninguno |
-| `POST` | `/api/scraping/buscar` | Busqueda distribuida y unificada de libros con enlaces y estado | Cuerpo JSON con esquema `FiltroScraping` |
-| `GET` | `/api/scraping/ofertas` | Consulta de libros en promocion o bajo costo | `precio_maximo` (float), `limite` (int) |
-| `POST` | `/api/scraping/autores-independientes` | Busqueda priorizando obras autopublicadas | Cuerpo JSON `FiltroScraping` y `puntuacion_minima` |
+| `GET` | `/` | Comprobación de bienvenida y estado del servicio | Ninguno |
+| `GET` | `/salud` | Verificación de estado operativo (health check) | Ninguno |
+| `GET` | `/api/scraping/fuentes` | Catálogo de fuentes registradas (librerías físicas, digitales y segunda mano) | Ninguno |
+| `POST` | `/api/scraping/buscar` | Búsqueda distribuida y unificada de libros con enlaces y estado | Cuerpo JSON con esquema `FiltroScraping` |
+| `GET` | `/api/scraping/ofertas` | Consulta de libros en promoción o bajo costo | `precio_maximo` (float), `limite` (int) |
+| `POST` | `/api/scraping/autores-independientes` | Búsqueda priorizando obras autopublicadas | Cuerpo JSON `FiltroScraping` y `puntuacion_minima` |
 
 ---
 
-## Enfoque de Privacidad y Scraping Etico
+## Enfoque de Privacidad y Scraping Ético
 
-El proyecto ha sido concebido bajo estrictos estandares de privacidad y respeto a las infraestructuras de terceros:
+El proyecto ha sido concebido bajo estrictos estándares de privacidad y respeto a las infraestructuras de terceros:
 
 1. **Privacidad Absoluta de los Usuarios**:
-   - **Cero analitica y cero rastreo de clics**: Ni el backend ni el frontend implementan telemetria, cookies, identificadores de sesion, balizas web ni interceptores de clics en los enlaces de compra. Los enlaces dirigen directamente a la fuente externa sin redirecciones intermedias de seguimiento.
-   - **Navegacion segura con `rel="noopener noreferrer"`**: Todos los enlaces externos se abren en pestanas aisladas impidiendo que el sitio de destino acceda al objeto `window.opener` o reciba cabeceras `Referer` que revelen el origen de navegacion del usuario.
-   - **Cero almacenamiento de datos personales**: La plataforma no solicita, no registra ni persiste identificadores de los usuarios finales, historiales de busqueda ni direcciones IP.
+   - **Cero analítica y cero rastreo de clics**: Ni el backend ni el frontend implementan telemetría, cookies, identificadores de sesión, balizas web ni interceptores de clics en los enlaces de compra. Los enlaces dirigen directamente a la fuente externa sin redirecciones intermedias de seguimiento.
+   - **Navegación segura con `rel="noopener noreferrer"`**: Todos los enlaces externos se abren en pestañas aisladas impidiendo que el sitio de destino acceda al objeto `window.opener` o reciba cabeceras `Referer` que revelen el origen de navegación del usuario.
+   - **Cero almacenamiento de datos personales**: La plataforma no solicita, no registra ni persiste identificadores de los usuarios finales, historiales de búsqueda ni direcciones IP.
 
-2. **Scraping Responsable y Etico**:
-   - **Cadencia controlada (Pacing)**: Se aplican pausas aleatorias entre solicitudes (1.0 a 4.0 segundos con variabilidad estocastica adicional) y demoras prolongadas entre paginaciones sucesivas para prevenir la sobrecarga de los servidores consultados.
-   - **Rotacion no invasiva de User-Agents**: Se emplean cadenas de agentes de usuario correspondientes a navegadores estandar para garantizar compatibilidad sin ocultar propositos ilegitimos.
+2. **Scraping Responsable y Ético**:
+   - **Cadencia controlada (Pacing)**: Se aplican pausas aleatorias entre solicitudes (1.0 a 4.0 segundos con variabilidad estocástica adicional) y demoras prolongadas entre paginaciones sucesivas para prevenir la sobrecarga de los servidores consultados.
+   - **Rotación no invasiva de User-Agents**: Se emplean cadenas de agentes de usuario correspondientes a navegadores estándar para garantizar compatibilidad sin ocultar propósitos ilegítimos.
    - **Cabecera Do Not Track (DNT)**: Todas las solicitudes HTTP salientes incluyen la directiva `DNT: 1`.
-   - **Gestion de limites de tasa**: El sistema interpreta de manera automatica respuestas con codigo HTTP 429 (Too Many Requests) o 503, suspendiendo temporalmente las consultas y aplicando retroceso exponencial.
-   - **Descarte silencioso de datos incompletos**: Si durante la extraccion un ejemplar carece de enlace valido de adquisicion, es descartado silenciosamente sin interrumpir el flujo del usuario ni degradar la experiencia de busqueda.
-   - **Consultas a informacion publica**: La extraccion se limita exclusivamente a datos bibliograficos y comerciales de acceso publico general.
+   - **Gestión de límites de tasa**: El sistema interpreta de manera automática respuestas con código HTTP 429 (Too Many Requests) o 503, suspendiendo temporalmente las consultas y aplicando retroceso exponencial.
+   - **Descarte silencioso de datos incompletos**: Si durante la extracción un ejemplar carece de enlace válido de adquisición, es descartado silenciosamente sin interrumpir el flujo del usuario ni degradar la experiencia de búsqueda.
+   - **Consultas a información pública**: La extracción se limita exclusivamente a datos bibliográficos y comerciales de acceso público general.
 
 ---
 
 ## Licencia y Consideraciones Legales
 
-Este software se proporciona con fines educativos, de investigacion y organizacion personal. Los usuarios son responsables de garantizar que su uso cumpla con los terminos de servicio de las plataformas consultadas y con las regulaciones de propiedad intelectual aplicables en sus respectivas jurisdicciones.
+Este software se proporciona con fines educativos, de investigación y organización personal. Los usuarios son responsables de garantizar que su uso cumpla con los términos de servicio de las plataformas consultadas y con las regulaciones de propiedad intelectual aplicables en sus respectivas jurisdicciones.

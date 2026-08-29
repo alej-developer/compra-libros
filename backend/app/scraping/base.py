@@ -1,9 +1,9 @@
 """
-Clase abstracta base para los scrapers de librerias.
+Clase abstracta base para los scrapers de librerías.
 
-Define la interfaz comun que deben implementar todos los scrapers del sistema.
+Define la interfaz común que deben implementar todos los scrapers del sistema.
 Proporciona la infraestructura compartida para realizar peticiones HTTP seguras,
-rotacion de User-Agents y tiempos de espera aleatorios.
+rotación de User-Agents y tiempos de espera aleatorios.
 """
 
 from abc import ABC, abstractmethod
@@ -25,24 +25,24 @@ from app.scraping.utilidades import (
 
 class ScraperBase(ABC):
     """
-    Clase abstracta base para todos los scrapers de librerias.
+    Clase abstracta base para todos los scrapers de librerías.
 
     Define la interfaz obligatoria que cada scraper concreto debe implementar,
-    y proporciona la infraestructura comun de seguridad y privacidad:
-    - Rotacion automatica de User-Agents.
+    y proporciona la infraestructura común de seguridad y privacidad:
+    - Rotación automática de User-Agents.
     - Tiempos de espera aleatorios entre peticiones.
     - Cliente HTTP con reintentos y manejo de errores.
     - Registro de eventos (logging) por fuente.
 
-    No se almacena ni se rastrea ningun dato de los usuarios del sistema.
+    No se almacena ni se rastrea ningún dato de los usuarios del sistema.
 
     Atributos protegidos:
         _nombre_fuente: Nombre identificador de la fuente de datos.
-        _url_base: URL raiz del sitio web a scrapear.
+        _url_base: URL raíz del sitio web a scrapear.
         _tipo_fuente: Tipo de fuente ('fisica', 'digital' o 'segunda_mano').
-        _pais: Pais de origen de la tienda.
+        _pais: País de origen de la tienda.
         _cliente: Cliente HTTP con medidas de seguridad.
-        _logger: Logger especifico para esta fuente.
+        _logger: Logger específico para esta fuente.
     """
 
     def __init__(
@@ -53,14 +53,14 @@ class ScraperBase(ABC):
         pais: str = "Desconocido",
     ) -> None:
         """
-        Inicializa el scraper base con la configuracion de la fuente.
+        Inicializa el scraper base con la configuración de la fuente.
 
-        Parametros:
+        Parámetros:
             nombre_fuente: Nombre identificador de la fuente.
-            url_base: URL raiz del sitio web objetivo.
-            tipo_fuente: 'fisica' para librerias fisicas, 'digital' para plataformas digitales,
-                         'segunda_mano' para librerias de libros usados.
-            pais: Pais de origen de la tienda.
+            url_base: URL raíz del sitio web objetivo.
+            tipo_fuente: 'fisica' para librerías físicas, 'digital' para plataformas digitales,
+                         'segunda_mano' para librerías de libros usados.
+            pais: País de origen de la tienda.
         """
         self._nombre_fuente = nombre_fuente
         self._url_base = url_base.rstrip("/")
@@ -81,7 +81,7 @@ class ScraperBase(ABC):
 
     @property
     def url_base(self) -> str:
-        """URL raiz del sitio web objetivo."""
+        """URL raíz del sitio web objetivo."""
         return self._url_base
 
     @property
@@ -91,21 +91,21 @@ class ScraperBase(ABC):
 
     @property
     def pais(self) -> str:
-        """Pais de origen de la tienda."""
+        """País de origen de la tienda."""
         return self._pais
 
-    # -- Metodos abstractos (interfaz obligatoria) --
+    # -- Métodos abstractos (interfaz obligatoria) --
 
     @abstractmethod
     async def buscar_libros(self, filtro: FiltroScraping) -> List[Libro]:
         """
-        Busca libros segun los filtros proporcionados.
+        Busca libros según los filtros proporcionados.
 
-        Cada scraper concreto debe implementar la logica de busqueda
-        especifica para su sitio web objetivo.
+        Cada scraper concreto debe implementar la lógica de búsqueda
+        específica para su sitio web objetivo.
 
-        Parametros:
-            filtro: Criterios de busqueda y filtraje.
+        Parámetros:
+            filtro: Criterios de búsqueda y filtraje.
 
         Retorna:
             Lista de libros encontrados que coinciden con los filtros.
@@ -117,11 +117,11 @@ class ScraperBase(ABC):
         """
         Extrae los detalles completos de un libro dado su URL.
 
-        Parametros:
-            url_libro: URL directa a la pagina del libro.
+        Parámetros:
+            url_libro: URL directa a la página del libro.
 
         Retorna:
-            Libro con todos los detalles extraidos, o None si falla.
+            Libro con todos los detalles extraídos, o None si falla.
         """
         ...
 
@@ -134,12 +134,12 @@ class ScraperBase(ABC):
         """
         Busca libros con precios muy bajos (ofertas, descuentos, liquidaciones).
 
-        Cada scraper debe implementar la logica especifica para encontrar
+        Cada scraper debe implementar la lógica específica para encontrar
         libros con precios reducidos en su plataforma.
 
-        Parametros:
-            precio_maximo: Precio maximo en la moneda local para considerar oferta.
-            limite: Numero maximo de resultados a retornar.
+        Parámetros:
+            precio_maximo: Precio máximo en la moneda local para considerar oferta.
+            limite: Número máximo de resultados a retornar.
 
         Retorna:
             Lista de libros en oferta o con precios muy bajos.
@@ -149,17 +149,17 @@ class ScraperBase(ABC):
     @abstractmethod
     async def construir_url_busqueda(self, filtro: FiltroScraping) -> str:
         """
-        Construye la URL de busqueda especifica para esta fuente.
+        Construye la URL de búsqueda específica para esta fuente.
 
-        Parametros:
-            filtro: Criterios de busqueda.
+        Parámetros:
+            filtro: Criterios de búsqueda.
 
         Retorna:
-            URL completa para realizar la busqueda.
+            URL completa para realizar la búsqueda.
         """
         ...
 
-    # -- Metodos protegidos compartidos --
+    # -- Métodos protegidos compartidos --
 
     def _construir_url_absoluta(self, href: Optional[str]) -> Optional[str]:
         """
@@ -168,11 +168,11 @@ class ScraperBase(ABC):
         Si la URL ya es absoluta (comienza con http:// o https://), se retorna
         tal cual. Si es relativa, se concatena con la URL base del scraper.
 
-        Parametros:
-            href: URL extraida del atributo href de un enlace HTML.
+        Parámetros:
+            href: URL extraída del atributo href de un enlace HTML.
 
         Retorna:
-            URL absoluta completa, o None si href es None o vacio.
+            URL absoluta completa, o None si href es None o vacío.
         """
         if not href or not href.strip():
             return None
@@ -183,15 +183,15 @@ class ScraperBase(ABC):
 
     def _validar_url_compra(self, url: Optional[str]) -> bool:
         """
-        Verifica si una URL de compra es valida para ser incluida en los resultados.
+        Verifica si una URL de compra es válida para ser incluida en los resultados.
 
-        Una URL se considera valida si no es None y comienza con http:// o https://.
+        Una URL se considera válida si no es None y comienza con http:// o https://.
 
-        Parametros:
+        Parámetros:
             url: URL a validar.
 
         Retorna:
-            True si la URL es valida, False en caso contrario.
+            True si la URL es válida, False en caso contrario.
         """
         if not url:
             return False
@@ -215,26 +215,26 @@ class ScraperBase(ABC):
         numero_resenas: Optional[int] = None,
     ) -> Libro:
         """
-        Metodo auxiliar para crear un objeto Libro con datos normalizados.
+        Método auxiliar para crear un objeto Libro con datos normalizados.
 
-        Centraliza la creacion de libros para garantizar que todos los
+        Centraliza la creación de libros para garantizar que todos los
         scrapers produzcan objetos consistentes.
 
-        Parametros:
-            titulo: Titulo del libro.
+        Parámetros:
+            titulo: Título del libro.
             nombre_autor: Nombre del autor.
             url_compra: Enlace directo real para adquirir el libro.
-            estado: Condicion fisica del libro (Nuevo o De segunda mano).
+            estado: Condición física del libro (Nuevo o De segunda mano).
             precio: Precio del libro (opcional).
             formato: Formato del libro.
             editorial: Nombre de la editorial (opcional).
-            categorias: Lista de categorias/generos (opcional).
-            isbn: Codigo ISBN (opcional).
+            categorias: Lista de categorías/géneros (opcional).
+            isbn: Código ISBN (opcional).
             imagen_url: URL de la imagen de portada (opcional).
             url_fuente: URL original del libro (opcional).
             idioma: Idioma del libro (opcional).
-            calificacion: Puntuacion del libro (opcional).
-            numero_resenas: Cantidad de resenas (opcional, para filtrado).
+            calificacion: Puntuación del libro (opcional).
+            numero_resenas: Cantidad de reseñas (opcional, para filtrado).
 
         Retorna:
             Instancia de Libro con los datos proporcionados.
@@ -244,7 +244,7 @@ class ScraperBase(ABC):
         )
 
         libro = Libro(
-            titulo=limpiar_texto(titulo) or "Sin titulo",
+            titulo=limpiar_texto(titulo) or "Sin título",
             autores=[autor],
             isbn=isbn,
             editorial=limpiar_texto(editorial),
@@ -272,18 +272,18 @@ class ScraperBase(ABC):
         idioma: Optional[str] = None,
     ) -> Edicion:
         """
-        Metodo auxiliar para crear un objeto Edicion con datos normalizados.
+        Método auxiliar para crear un objeto Edicion con datos normalizados.
 
-        Parametros:
+        Parámetros:
             tienda: Nombre de la tienda.
-            precio: Precio de la edicion (opcional).
-            moneda: Codigo ISO de la moneda.
-            formato: Formato de la edicion.
+            precio: Precio de la edición (opcional).
+            moneda: Código ISO de la moneda.
+            formato: Formato de la edición.
             url_compra: URL para comprar (opcional).
             disponibilidad: Estado de disponibilidad.
-            isbn: Codigo ISBN de la edicion (opcional).
-            numero_paginas: Cantidad de paginas (opcional).
-            idioma: Idioma de la edicion (opcional).
+            isbn: Código ISBN de la edición (opcional).
+            numero_paginas: Cantidad de páginas (opcional).
+            idioma: Idioma de la edición (opcional).
 
         Retorna:
             Instancia de Edicion con los datos proporcionados.
@@ -302,7 +302,7 @@ class ScraperBase(ABC):
         )
 
     def __repr__(self) -> str:
-        """Representacion en cadena del scraper."""
+        """Representación en cadena del scraper."""
         return (
             f"{self.__class__.__name__}("
             f"fuente='{self._nombre_fuente}', "

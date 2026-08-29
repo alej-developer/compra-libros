@@ -1,9 +1,9 @@
 """
-Modulo de utilidades para el motor de scraping.
+Módulo de utilidades para el motor de scraping.
 
-Proporciona herramientas de seguridad y privacidad: rotacion de User-Agents,
-gestion de tiempos de espera aleatorios, y manejo centralizado de excepciones.
-No se almacena ni se rastrea ningun dato de los usuarios.
+Proporciona herramientas de seguridad y privacidad: rotación de User-Agents,
+gestión de tiempos de espera aleatorios, y manejo centralizado de excepciones.
+No se almacena ni se rastrea ningún dato de los usuarios.
 """
 
 import random

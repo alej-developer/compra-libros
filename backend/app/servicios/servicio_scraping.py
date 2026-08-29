@@ -1,9 +1,9 @@
 """
 Servicio orquestador del motor de scraping.
 
-Coordina la ejecucion de multiples scrapers, aplica filtros de autores
+Coordina la ejecución de múltiples scrapers, aplica filtros de autores
 independientes y consolida los resultados. Es el punto central de la
-logica de negocio para las operaciones de scraping.
+lógica de negocio para las operaciones de scraping.
 
 No se almacenan datos personales de los usuarios del sistema.
 """
@@ -29,13 +29,13 @@ class ServicioScraping:
     """
     Servicio principal que orquesta las operaciones de scraping.
 
-    Gestiona multiples scrapers (fisicos, digitales y de segunda mano),
-    ejecuta busquedas en paralelo, aplica el algoritmo de filtrado de
+    Gestiona múltiples scrapers (físicos, digitales y de segunda mano),
+    ejecuta búsquedas en paralelo, aplica el algoritmo de filtrado de
     autores independientes y consolida los resultados en una respuesta
     unificada.
 
-    Incluye filtrado silencioso: los libros sin URL de compra valida
-    se descartan automaticamente de los resultados finales.
+    Incluye filtrado silencioso: los libros sin URL de compra válida
+    se descartan automáticamente de los resultados finales.
 
     Atributos:
         _scrapers: Lista de scrapers registrados.
