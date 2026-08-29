@@ -11,10 +11,9 @@ No se almacenan datos personales de los usuarios del sistema.
 import asyncio
 import logging
 import time
-from typing import List, Optional
+from typing import List
 
 from app.modelos import Libro, FiltroScraping
-from app.modelos.edicion import FormatoLibro
 from app.modelos.resultado_busqueda import LibroConEdiciones, ResultadoBusqueda
 from app.scraping.base import ScraperBase
 from app.scraping.scraper_libreria_fisica import ScraperLibreriaFisica

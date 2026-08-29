@@ -20,7 +20,6 @@ from app.scraping.utilidades import (
     RotadorUserAgent,
     GestorEspera,
     limpiar_texto,
-    extraer_precio,
 )
 
 

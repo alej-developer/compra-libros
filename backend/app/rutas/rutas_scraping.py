@@ -2,11 +2,13 @@
 Rutas (endpoints) del motor de scraping.
 
 Define los endpoints de la API para buscar libros, obtener ofertas
-y filtrar autores independientes.
+y filtrar autores independientes. Los resultados incluyen enlaces
+directos de compra (url_compra) y el estado del libro (Nuevo o
+De segunda mano), provenientes de librerias fisicas, plataformas
+digitales y vendedores de segunda mano.
 """
 
 from fastapi import APIRouter, Query
-from typing import Optional
 
 from app.modelos import FiltroScraping
 from app.modelos.resultado_busqueda import ResultadoBusqueda

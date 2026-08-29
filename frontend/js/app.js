@@ -1,7 +1,8 @@
 /**
- * Lógica principal de la interfaz de usuario para Mi Rincón de Libros.
- * Controla eventos de navegación, búsquedas, filtros y renderizado
- * en cuadrícula o lista limpia.
+ * Logica principal de la interfaz de usuario para Mi Rincon de Libros.
+ * Controla eventos de navegacion, busquedas, filtros y renderizado
+ * en cuadricula o lista. Muestra el estado del libro (Nuevo / De segunda
+ * mano) y enlaza directamente a la pagina de compra sin rastreo alguno.
  */
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -15,7 +15,7 @@ from bs4 import BeautifulSoup
 
 from app.modelos import Libro, FiltroScraping
 from app.modelos.libro import EstadoLibro
-from app.modelos.edicion import FormatoLibro, EstadoDisponibilidad, Edicion
+from app.modelos.edicion import FormatoLibro
 from app.scraping.base import ScraperBase
 from app.scraping.utilidades import limpiar_texto, extraer_precio
 
