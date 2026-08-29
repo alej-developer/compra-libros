@@ -34,11 +34,14 @@ class Configuracion(BaseSettings):
         "http://localhost:5173",
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
+        "http://192.168.1.130:3000",
+        "http://192.168.1.130:5173",
+        "*",
     ]
 
     # -- Scraping --
-    tiempo_espera_scraping: int = 30  # segundos
-    maximo_reintentos: int = 3
+    tiempo_espera_scraping: int = 8  # segundos
+    maximo_reintentos: int = 1
     agente_usuario: str = (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         "AppleWebKit/537.36 (KHTML, like Gecko) "

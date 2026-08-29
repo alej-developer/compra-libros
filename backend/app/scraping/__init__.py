@@ -4,6 +4,7 @@ from .base import ScraperBase
 from .scraper_libreria_fisica import ScraperLibreriaFisica
 from .scraper_plataforma_digital import ScraperPlataformaDigital
 from .scraper_segunda_mano import ScraperSegundaMano
+from .scraper_open_library import ScraperOpenLibrary
 from .filtro_autores import FiltroAutoresIndependientes
 from .utilidades import (
     RotadorUserAgent,
@@ -18,6 +19,7 @@ __all__ = [
     "ScraperLibreriaFisica",
     "ScraperPlataformaDigital",
     "ScraperSegundaMano",
+    "ScraperOpenLibrary",
     "FiltroAutoresIndependientes",
     "RotadorUserAgent",
     "GestorEspera",

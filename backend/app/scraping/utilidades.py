@@ -121,17 +121,17 @@ class GestorEspera:
 
     def __init__(
         self,
-        espera_minima: float = 1.0,
-        espera_maxima: float = 4.0,
-        espera_entre_paginas: float = 2.0,
+        espera_minima: float = 0.1,
+        espera_maxima: float = 0.4,
+        espera_entre_paginas: float = 0.5,
     ) -> None:
         """
         Inicializa el gestor de espera con los tiempos configurados.
 
-        Parametros:
-            espera_minima: Tiempo minimo de espera en segundos.
-            espera_maxima: Tiempo maximo de espera en segundos.
-            espera_entre_paginas: Tiempo adicional entre paginas consecutivas.
+        Parámetros:
+            espera_minima: Tiempo mínimo de espera en segundos.
+            espera_maxima: Tiempo máximo de espera en segundos.
+            espera_entre_paginas: Tiempo adicional entre páginas consecutivas.
         """
         self._espera_minima = espera_minima
         self._espera_maxima = espera_maxima
@@ -140,18 +140,13 @@ class GestorEspera:
 
     async def esperar(self) -> None:
         """
-        Pausa la ejecucion un tiempo aleatorio antes de la siguiente peticion.
-
-        La pausa se calcula entre espera_minima y espera_maxima, con una
-        variacion adicional para mayor naturalidad.
+        Pausa la ejecución un tiempo aleatorio antes de la siguiente petición.
         """
         espera = random.uniform(self._espera_minima, self._espera_maxima)
+        variacion = espera * random.uniform(-0.1, 0.1)
+        espera_final = max(0.05, espera + variacion)
 
-        # Agregar una variacion extra del 20% para mayor impredecibilidad
-        variacion = espera * random.uniform(-0.2, 0.2)
-        espera_final = max(0.5, espera + variacion)
-
-        logger.debug("Esperando %.2f segundos antes de la siguiente peticion", espera_final)
+        logger.debug("Esperando %.2f segundos antes de la siguiente petición", espera_final)
         await asyncio.sleep(espera_final)
         self._ultima_peticion = time.time()
 
@@ -286,20 +281,23 @@ class ClienteHttp:
 
 def limpiar_texto(texto: Optional[str]) -> Optional[str]:
     """
-    Limpia y normaliza un texto extraido de HTML.
+    Limpia, sanitiza y normaliza un texto extraído de HTML.
 
-    Elimina espacios en blanco excesivos, saltos de linea innecesarios
-    y caracteres no imprimibles.
+    Elimina etiquetas de script, tags HTML residuales, espacios en blanco
+    excesivos y caracteres no imprimibles.
 
-    Parametros:
+    Parámetros:
         texto: Texto a limpiar.
 
     Retorna:
-        Texto limpio, o None si la entrada es None o vacia.
+        Texto limpio y sanitizado, o None si la entrada es None o vacía.
     """
     if not texto:
         return None
-    limpio = " ".join(texto.split())
+    import re
+    sin_scripts = re.sub(r"<(script|style)[^>]*>.*?</\1>", "", texto, flags=re.DOTALL | re.IGNORECASE)
+    sin_tags = re.sub(r"<[^>]+>", "", sin_scripts)
+    limpio = " ".join(sin_tags.split())
     return limpio.strip() if limpio else None
 
 

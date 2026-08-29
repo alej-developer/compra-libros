@@ -66,9 +66,12 @@ class ScraperBase(ABC):
         self._url_base = url_base.rstrip("/")
         self._tipo_fuente = tipo_fuente
         self._pais = pais
+        from app.configuracion import configuracion
         self._cliente = ClienteHttp(
             rotador_ua=RotadorUserAgent(),
             gestor_espera=GestorEspera(),
+            maximo_reintentos=configuracion.maximo_reintentos,
+            tiempo_espera=configuracion.tiempo_espera_scraping,
         )
         self._logger = logging.getLogger(f"scraping.{nombre_fuente}")
 

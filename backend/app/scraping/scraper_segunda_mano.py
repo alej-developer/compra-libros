@@ -10,6 +10,7 @@ Todos los libros extraídos por este scraper se marcan automáticamente
 con estado "De segunda mano".
 """
 
+import json
 import logging
 from typing import List, Optional
 from urllib.parse import quote_plus
@@ -282,15 +283,23 @@ class ScraperSegundaMano(ScraperBase):
         filtro: FiltroScraping,
     ) -> List[Libro]:
         """
-        Parsea la pagina de resultados y extrae la lista de libros usados.
+        Parsea la página de resultados y extrae la lista de libros usados.
+        Intenta primero mediante datos estructurados JSON-LD (Schema.org)
+        y, en su defecto, recurre a los selectores CSS clásicos.
 
-        Parametros:
-            pagina: HTML parseado de la pagina de resultados.
+        Parámetros:
+            pagina: HTML parseado de la página de resultados.
             filtro: Filtros para aplicar durante el parseo.
 
         Retorna:
-            Lista de libros extraidos de la pagina.
+            Lista de libros extraídos de la página.
         """
+        # 1. Intentar extracción por datos estructurados JSON-LD
+        libros_json = self._parsear_json_ld(pagina, filtro)
+        if libros_json:
+            return libros_json
+
+        # 2. Respaldo por selectores CSS
         libros = []
         contenedores = pagina.select(self._selectores["contenedor_libro"])
 
@@ -303,6 +312,121 @@ class ScraperSegundaMano(ScraperBase):
                 self._logger.debug(
                     "Error al parsear libro de segunda mano: %s", str(error)
                 )
+                continue
+
+        return libros
+
+    def _parsear_json_ld(
+        self,
+        pagina: BeautifulSoup,
+        filtro: FiltroScraping,
+    ) -> List[Libro]:
+        """
+        Extrae libros de segunda mano a partir de etiquetas JSON-LD de Schema.org.
+
+        Parámetros:
+            pagina: Documento HTML parseado.
+            filtro: Filtros aplicables.
+
+        Retorna:
+            Lista de libros encontrados en las estructuras JSON-LD.
+        """
+        libros = []
+        scripts = pagina.find_all("script", id="item-list") or pagina.find_all(
+            "script", type="application/ld+json"
+        )
+
+        for script in scripts:
+            if not script.string:
+                continue
+            try:
+                data = json.loads(script.string)
+                items = []
+                if isinstance(data, dict):
+                    if data.get("@type") == "ItemList" and "itemListElement" in data:
+                        items = data["itemListElement"]
+                    elif data.get("@type") in ("Book", "Product"):
+                        items = [{"item": data}]
+                elif isinstance(data, list):
+                    items = [{"item": d} for d in data if isinstance(d, dict)]
+
+                for elem in items:
+                    item_data = elem.get("item", elem) if isinstance(elem, dict) else {}
+                    if not isinstance(item_data, dict):
+                        continue
+
+                    titulo = item_data.get("name") or item_data.get("headline")
+                    if not titulo:
+                        continue
+
+                    # Autor
+                    autor_obj = item_data.get("author")
+                    autor_nombre = "Autor desconocido"
+                    if isinstance(autor_obj, dict):
+                        autor_nombre = autor_obj.get("name", "Autor desconocido")
+                    elif isinstance(autor_obj, list) and autor_obj:
+                        if isinstance(autor_obj[0], dict):
+                            autor_nombre = autor_obj[0].get("name", "Autor desconocido")
+                        else:
+                            autor_nombre = str(autor_obj[0])
+                    elif isinstance(autor_obj, str):
+                        autor_nombre = autor_obj
+
+                    # Editorial
+                    editorial_obj = item_data.get("publisher")
+                    editorial = None
+                    if isinstance(editorial_obj, dict):
+                        editorial = editorial_obj.get("name")
+                    elif isinstance(editorial_obj, str):
+                        editorial = editorial_obj
+
+                    # Precio y URL de compra
+                    offers = item_data.get("offers", {})
+                    precio = None
+                    url_compra = item_data.get("url")
+                    if isinstance(offers, dict):
+                        if offers.get("price") is not None:
+                            try:
+                                precio = float(offers["price"])
+                            except (ValueError, TypeError):
+                                precio = None
+                        if offers.get("url"):
+                            url_compra = offers["url"]
+                    elif isinstance(offers, list) and offers:
+                        primera_oferta = offers[0]
+                        if isinstance(primera_oferta, dict):
+                            if primera_oferta.get("price") is not None:
+                                try:
+                                    precio = float(primera_oferta["price"])
+                                except (ValueError, TypeError):
+                                    precio = None
+                            if primera_oferta.get("url"):
+                                url_compra = primera_oferta["url"]
+
+                    url_compra = self._construir_url_absoluta(url_compra)
+                    if not self._validar_url_compra(url_compra):
+                        continue
+
+                    isbn = item_data.get("isbn")
+                    imagen_url = item_data.get("image")
+                    if isinstance(imagen_url, list) and imagen_url:
+                        imagen_url = imagen_url[0]
+
+                    libro = self._crear_libro(
+                        titulo=titulo,
+                        nombre_autor=autor_nombre,
+                        url_compra=url_compra,
+                        estado=EstadoLibro.SEGUNDA_MANO,
+                        precio=precio,
+                        editorial=editorial,
+                        isbn=self._normalizar_isbn(isbn),
+                        imagen_url=imagen_url,
+                        url_fuente=url_compra,
+                    )
+                    if self._cumple_filtros(libro, filtro):
+                        libros.append(libro)
+            except Exception as err:
+                self._logger.debug("Error procesando script JSON-LD: %s", str(err))
                 continue
 
         return libros

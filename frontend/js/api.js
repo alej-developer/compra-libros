@@ -4,7 +4,9 @@
  * obtener ofertas y filtrar autores independientes.
  */
 
-const URL_BASE_API = 'http://127.0.0.1:8000';
+const URL_BASE_API = (typeof window !== 'undefined' && window.location && window.location.hostname)
+    ? `http://${window.location.hostname}:8000`
+    : 'http://127.0.0.1:8000';
 
 class ClienteApiLibros {
     constructor(urlBase = URL_BASE_API) {
