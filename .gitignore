@@ -10,6 +10,8 @@
 .env.production
 .env.staging
 *.env
+# La plantilla documentada en el README si se versiona.
+!.env.ejemplo
 secrets.json
 credentials.json
 service-account*.json

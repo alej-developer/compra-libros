@@ -96,6 +96,7 @@ La aplicación sigue los principios de la Programación Orientada a Objetos (POO
 ```
 .
 |-- .gitignore                  # Exclusión estricta de credenciales, entornos y temporales
+|-- LICENSE                     # Licencia MIT
 |-- README.md                   # Documentación técnica principal
 |-- backend/
 |   |-- .env.ejemplo            # Plantilla para variables de entorno locales
@@ -270,5 +271,7 @@ El proyecto ha sido concebido bajo estrictos estándares de privacidad y respeto
 ---
 
 ## Licencia y Consideraciones Legales
+
+Este proyecto se distribuye bajo la licencia MIT. El texto completo está en el archivo [LICENSE](LICENSE).
 
 Este software se proporciona con fines educativos, de investigación y organización personal. Los usuarios son responsables de garantizar que su uso cumpla con los términos de servicio de las plataformas consultadas y con las regulaciones de propiedad intelectual aplicables en sus respectivas jurisdicciones.
