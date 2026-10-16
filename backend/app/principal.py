@@ -12,6 +12,43 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.configuracion import configuracion
 
 
+def _origenes_cors_explicitos(origenes: list[str]) -> list[str]:
+    """
+    Lee orígenes CORS y rechaza el comodín.
+
+    Con ``allow_credentials=True`` no se puede aceptar ``*``: el navegador
+    y el middleware acabarían reflejando cualquier origen junto con
+    credenciales. Solo vale una lista de URLs concretas.
+
+    Parámetros:
+        origenes: Lista declarada en la configuración o en el entorno.
+
+    Retorna:
+        list[str]: Orígenes explícitos, sin duplicados, en el orden dado.
+
+    Lanza:
+        ValueError: Si la lista queda vacía o algún origen está vacío
+        o contiene ``*``.
+    """
+    explicitos: list[str] = []
+    vistos: set[str] = set()
+    for origen in origenes:
+        valor = origen.strip()
+        if not valor:
+            raise ValueError("El origen CORS no puede estar vacío.")
+        if "*" in valor:
+            raise ValueError(
+                "CORS con allow_credentials=True no acepta el origen '*'. "
+                "Use una lista explícita de orígenes."
+            )
+        if valor not in vistos:
+            vistos.add(valor)
+            explicitos.append(valor)
+    if not explicitos:
+        raise ValueError("La lista de orígenes CORS explícitos no puede estar vacía.")
+    return explicitos
+
+
 def crear_aplicacion() -> FastAPI:
     """
     Fábrica de la aplicación FastAPI.
@@ -31,11 +68,12 @@ def crear_aplicacion() -> FastAPI:
     )
 
     # -- Configuración de CORS --
-    # Permite la comunicación segura entre el frontend y el backend.
-    # Los orígenes permitidos se definen en la configuración central.
+    # Con credenciales solo se admiten orígenes explícitos. El comodín '*'
+    # se rechaza: no puede combinarse con allow_credentials=True.
+    origenes = _origenes_cors_explicitos(list(configuracion.origenes_permitidos))
     aplicacion.add_middleware(
         CORSMiddleware,
-        allow_origins=configuracion.origenes_permitidos,
+        allow_origins=origenes,
         allow_credentials=True,
         allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=[

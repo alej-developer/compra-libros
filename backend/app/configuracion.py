@@ -29,14 +29,11 @@ class Configuracion(BaseSettings):
     puerto: int = 8000
 
     # -- CORS --
+    # Lista explícita. El comodín '*' no es válido con credenciales.
+    # El frontend estático se sirve en el puerto 3000.
     origenes_permitidos: List[str] = [
         "http://localhost:3000",
-        "http://localhost:5173",
         "http://127.0.0.1:3000",
-        "http://127.0.0.1:5173",
-        "http://192.168.1.130:3000",
-        "http://192.168.1.130:5173",
-        "*",
     ]
 
     # -- Scraping --

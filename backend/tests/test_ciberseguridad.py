@@ -19,7 +19,8 @@ from pydantic import ValidationError
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app.principal import crear_aplicacion
+from app.configuracion import configuracion
+from app.principal import crear_aplicacion, _origenes_cors_explicitos
 from app.modelos import Libro, Autor, FiltroScraping
 from app.modelos.libro import EstadoLibro
 from app.scraping.utilidades import ClienteHttp, limpiar_texto
@@ -133,6 +134,85 @@ class TestResistenciaDoS(unittest.IsolatedAsyncioTestCase):
                 timeout=10.0,
             )
             self.assertIn(respuesta.status_code, (200, 422))
+
+
+class TestCorsCredenciales(unittest.IsolatedAsyncioTestCase):
+    """CORS con credenciales: solo orígenes explícitos, nunca el comodín."""
+
+    def test_rechaza_comodin(self):
+        """El asterisco, solo o mezclado, no puede entrar en la lista."""
+        with self.assertRaises(ValueError):
+            _origenes_cors_explicitos(["*"])
+        with self.assertRaises(ValueError):
+            _origenes_cors_explicitos(["http://localhost:3000", " * "])
+        with self.assertRaises(ValueError):
+            _origenes_cors_explicitos(["https://*.ejemplo.com"])
+
+    def test_lista_explicita(self):
+        """Los orígenes concretos se conservan, sin duplicados."""
+        origenes = _origenes_cors_explicitos(
+            ["http://localhost:3000", " http://127.0.0.1:3000 ", "http://localhost:3000"]
+        )
+        self.assertEqual(
+            origenes,
+            ["http://localhost:3000", "http://127.0.0.1:3000"],
+        )
+
+    def test_crear_aplicacion_rechaza_comodin(self):
+        """La fábrica no arranca si la configuración incluye '*'."""
+        original = list(configuracion.origenes_permitidos)
+        configuracion.origenes_permitidos = ["*"]
+        try:
+            with self.assertRaises(ValueError):
+                crear_aplicacion()
+        finally:
+            configuracion.origenes_permitidos = original
+
+    def test_configuracion_sin_comodin_ni_ip_local(self):
+        """Los valores por defecto no abren CORS a '*' ni a la LAN."""
+        self.assertNotIn("*", configuracion.origenes_permitidos)
+        for origen in configuracion.origenes_permitidos:
+            self.assertNotIn("*", origen)
+            self.assertNotIn("192.168.1.130", origen)
+        self.assertIn("http://localhost:3000", configuracion.origenes_permitidos)
+
+    def test_env_ejemplo_sin_comodin_ni_ip_local(self):
+        """La plantilla de entorno documenta solo el origen del frontend."""
+        ruta = Path(__file__).resolve().parent.parent / ".env.ejemplo"
+        texto = ruta.read_text(encoding="utf-8")
+        self.assertNotIn("192.168.1.130", texto)
+        linea = next(
+            item for item in texto.splitlines() if item.startswith("ORIGENES_PERMITIDOS=")
+        )
+        self.assertNotIn("*", linea)
+        self.assertIn("http://localhost:3000", linea)
+
+    async def test_preflight_solo_origen_explicito(self):
+        """El preflight refleja el origen permitido y omite el de la LAN."""
+        transport = httpx.ASGITransport(app=aplicacion)
+        async with httpx.AsyncClient(
+            transport=transport, base_url="http://seguridad"
+        ) as cliente:
+            permitido = await cliente.options(
+                "/salud",
+                headers={
+                    "Origin": "http://localhost:3000",
+                    "Access-Control-Request-Method": "GET",
+                },
+            )
+            self.assertEqual(
+                permitido.headers.get("access-control-allow-origin"),
+                "http://localhost:3000",
+            )
+            self.assertEqual(
+                permitido.headers.get("access-control-allow-credentials"),
+                "true",
+            )
+            ajeno = await cliente.get(
+                "/salud",
+                headers={"Origin": "http://192.168.1.130:3000"},
+            )
+            self.assertIsNone(ajeno.headers.get("access-control-allow-origin"))
 
 
 class TestPrivacidadYTelemetria(unittest.TestCase):
