@@ -189,7 +189,7 @@ pip install -e .
 O instale directamente las librerías requeridas:
 
 ```bash
-pip install fastapi uvicorn[standard] pydantic pydantic-settings httpx beautifulsoup4 lxml
+pip install "fastapi==0.143.2" "uvicorn[standard]==0.54.0" "pydantic==2.14.1" "pydantic-settings==2.16.0" "httpx==0.28.1" "beautifulsoup4==4.15.0" "lxml==6.1.3"
 ```
 
 ### 4. Variables de Entorno (Opcional)
